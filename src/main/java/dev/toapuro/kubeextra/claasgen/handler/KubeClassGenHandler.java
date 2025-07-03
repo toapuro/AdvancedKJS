@@ -1,10 +1,9 @@
-package dev.toapuro.kubeextra.claasgen;
+package dev.toapuro.kubeextra.claasgen.handler;
 
-import dev.toapuro.kubeextra.claasgen.gen.GeneratedClass;
-import dev.toapuro.kubeextra.claasgen.gen.GeneratedClassCacheMap;
-import dev.toapuro.kubeextra.claasgen.gen.KubeClass;
+import dev.toapuro.kubeextra.claasgen.KubeClass;
 import dev.toapuro.kubeextra.claasgen.generator.ClassGenerator;
-import dev.toapuro.kubeextra.claasgen.kubejs.KubeJSImplHandler;
+import dev.toapuro.kubeextra.claasgen.generator.GeneratedClass;
+import dev.toapuro.kubeextra.claasgen.generator.GeneratedClassCacheMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,4 +1,4 @@
-package dev.toapuro.kubeextra.claasgen.gen;
+package dev.toapuro.kubeextra.claasgen;
 
 import dev.toapuro.kubeextra.claasgen.annotation.KubeAnnotation;
 

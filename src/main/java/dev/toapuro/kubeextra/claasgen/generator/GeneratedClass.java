@@ -1,5 +1,6 @@
-package dev.toapuro.kubeextra.claasgen.gen;
+package dev.toapuro.kubeextra.claasgen.generator;
 
+import dev.toapuro.kubeextra.claasgen.KubeClass;
 import javassist.CtClass;
 import org.objectweb.asm.tree.ClassNode;
 

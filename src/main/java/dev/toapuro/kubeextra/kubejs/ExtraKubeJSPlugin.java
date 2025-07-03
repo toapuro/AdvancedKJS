@@ -1,13 +1,9 @@
 package dev.toapuro.kubeextra.kubejs;
 
 import dev.latvian.mods.kubejs.KubeJSPlugin;
-import dev.latvian.mods.kubejs.script.ScriptManager;
 import dev.latvian.mods.kubejs.script.ScriptType;
-import dev.latvian.mods.kubejs.script.ScriptTypeHolder;
-import dev.latvian.mods.rhino.Context;
-import dev.toapuro.kubeextra.claasgen.KubeClassGenHandler;
+import dev.toapuro.kubeextra.claasgen.handler.KubeClassGenHandler;
 import dev.toapuro.kubeextra.claasgen.kubejs.KubeJSImplHandler;
-import dev.toapuro.kubeextra.claasgen.kubejs.builder.KubeClassBuilderJS;
 import dev.toapuro.kubeextra.claasgen.kubejs.event.ClassGenRegisterEvent;
 import dev.toapuro.kubeextra.claasgen.kubejs.event.KubeClassGenEvents;
 import org.slf4j.Logger;

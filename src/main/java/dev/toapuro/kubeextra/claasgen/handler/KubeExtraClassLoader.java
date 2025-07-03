@@ -1,6 +1,6 @@
-package dev.toapuro.kubeextra.claasgen;
+package dev.toapuro.kubeextra.claasgen.handler;
 
-import dev.toapuro.kubeextra.claasgen.gen.GeneratedClass;
+import dev.toapuro.kubeextra.claasgen.generator.GeneratedClass;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,9 +1,8 @@
 package dev.toapuro.kubeextra.claasgen.generator;
 
+import dev.toapuro.kubeextra.claasgen.KubeMethod;
 import dev.toapuro.kubeextra.claasgen.annotation.KubeAnnotation;
 import dev.toapuro.kubeextra.claasgen.kubejs.JavaMethodContext;
-import dev.toapuro.kubeextra.claasgen.gen.GeneratedMethod;
-import dev.toapuro.kubeextra.claasgen.gen.KubeMethod;
 import dev.toapuro.kubeextra.claasgen.parameter.MethodParameterTypes;
 import javassist.CtClass;
 import javassist.CtMethod;
@@ -15,11 +14,11 @@ import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
-public class KubeMethodGenerator {
-    private static final Logger LOGGER = LoggerFactory.getLogger(KubeMethodGenerator.class);
+public class MethodGenerator {
+    private static final Logger LOGGER = LoggerFactory.getLogger(MethodGenerator.class);
     private Map<KubeMethod, GeneratedMethod> methodCache;
 
-    public KubeMethodGenerator() {
+    public MethodGenerator() {
         this.methodCache = new HashMap<>();
     }
 

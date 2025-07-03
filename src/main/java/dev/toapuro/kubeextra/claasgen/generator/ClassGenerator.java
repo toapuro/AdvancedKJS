@@ -1,12 +1,10 @@
 package dev.toapuro.kubeextra.claasgen.generator;
 
+import dev.toapuro.kubeextra.claasgen.HardcodedConfig;
+import dev.toapuro.kubeextra.claasgen.KubeClass;
+import dev.toapuro.kubeextra.claasgen.KubeMethod;
 import dev.toapuro.kubeextra.claasgen.kubejs.JavaClassContext;
 import dev.toapuro.kubeextra.claasgen.kubejs.JavaMethodContext;
-import dev.toapuro.kubeextra.claasgen.HardcodedConfig;
-import dev.toapuro.kubeextra.claasgen.gen.GeneratedClass;
-import dev.toapuro.kubeextra.claasgen.gen.GeneratedMethod;
-import dev.toapuro.kubeextra.claasgen.gen.KubeClass;
-import dev.toapuro.kubeextra.claasgen.gen.KubeMethod;
 import javassist.*;
 import javassist.bytecode.BadBytecode;
 import javassist.bytecode.ClassFile;
@@ -23,12 +21,12 @@ import java.util.Map;
 public class ClassGenerator {
     private static final Logger LOGGER = LoggerFactory.getLogger(ClassGenerator.class);
     private final Map<KubeClass, GeneratedClass> classCache;
-    private final KubeMethodGenerator generator;
+    private final MethodGenerator generator;
     private int generatedCount = 0;
 
     public ClassGenerator() {
         this.classCache = new HashMap<>();
-        this.generator = new KubeMethodGenerator();
+        this.generator = new MethodGenerator();
     }
 
     public void clearCache() {

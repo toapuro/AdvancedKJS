@@ -1,10 +1,9 @@
-package dev.toapuro.kubeextra.claasgen.gen;
+package dev.toapuro.kubeextra.claasgen;
 
 import dev.latvian.mods.rhino.BaseFunction;
 import dev.toapuro.kubeextra.claasgen.annotation.KubeAnnotation;
 import dev.toapuro.kubeextra.claasgen.parameter.MethodParameterTypes;
 import javassist.CtClass;
-import javassist.bytecode.annotation.Annotation;
 
 import java.util.List;
 

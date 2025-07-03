@@ -1,4 +1,4 @@
-package dev.toapuro.kubeextra.claasgen.gen;
+package dev.toapuro.kubeextra.claasgen.generator;
 
 import java.util.HashMap;
 
