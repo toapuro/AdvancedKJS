@@ -1,0 +1,1 @@
+dev.toapuro.kubeextra.kubejs.ExtraKubeJSPlugin
