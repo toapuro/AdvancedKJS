@@ -53,10 +53,10 @@ public class KubeClassGenHandler {
         generatedClassCacheMap = KubeClassGenHandler.INSTANCE.generateAll();
 
         KubeExtraClassLoader kubeExtraClassLoader = new KubeExtraClassLoader(getClass().getClassLoader());
-        ClassLoaderHandler.setClassLoader(kubeExtraClassLoader);
+        ClassLoadingHandler.setClassLoader(kubeExtraClassLoader);
 
         generatedClassCacheMap.forEach((string, generatedClass) -> {
-            Class<?> definedClass = ClassLoaderHandler.defineClass(generatedClass);
+            Class<?> definedClass = ClassLoadingHandler.defineClass(generatedClass);
             LOGGER.info("Defined {}", definedClass);
         });
     }

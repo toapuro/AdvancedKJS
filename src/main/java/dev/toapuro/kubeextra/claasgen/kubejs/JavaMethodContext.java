@@ -1,10 +1,11 @@
 package dev.toapuro.kubeextra.claasgen.kubejs;
 
+import dev.toapuro.kubeextra.claasgen.annotation.KubeAnnotation;
 import javassist.ClassPool;
+import javassist.CtBehavior;
 import javassist.CtClass;
-import javassist.CtMethod;
+import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.ConstPool;
-import javassist.bytecode.annotation.Annotation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +15,7 @@ public class JavaMethodContext {
     private final CtClass parentClass;
     private final ConstPool constPool;
     private final ClassPool classPool;
-    private final List<Annotation> annotations;
+    private final List<KubeAnnotation> annotations;
 
     public JavaMethodContext(JavaClassContext classContext, CtClass parentClass, ConstPool constPool, ClassPool classPool) {
         this.classContext = classContext;
@@ -24,11 +25,16 @@ public class JavaMethodContext {
         this.annotations = new ArrayList<>();
     }
 
-    public void addAnnotation(Annotation annotation) {
+    public void addAnnotation(KubeAnnotation annotation) {
         this.annotations.add(annotation);
     }
 
-    public void buildAnnotations(CtMethod ctMethod) {
+    public void buildAnnotations(CtBehavior behaivior) {
+        AnnotationsAttribute attribute = new AnnotationsAttribute(constPool, AnnotationsAttribute.visibleTag);
+        for (KubeAnnotation annotation : this.annotations) {
+            attribute.addAnnotation(annotation.compileAnnotation(constPool));
+        }
+        behaivior.getMethodInfo().addAttribute(attribute);
     }
 
     public JavaClassContext getClassContext() {

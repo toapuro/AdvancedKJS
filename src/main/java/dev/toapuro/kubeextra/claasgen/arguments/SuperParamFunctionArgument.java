@@ -1,0 +1,23 @@
+package dev.toapuro.kubeextra.claasgen.arguments;
+
+import dev.toapuro.kubeextra.claasgen.kubejs.callback.InstantFunction;
+import javassist.CtClass;
+
+public class SuperParamFunctionArgument extends SuperParamArgument {
+    private final InstantFunction instant;
+    private final int index;
+
+    public SuperParamFunctionArgument(CtClass paramClass, InstantFunction instant, int index) {
+        super(paramClass, ArgType.FUNCTION);
+        this.instant = instant;
+        this.index = index;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public InstantFunction getInstant() {
+        return instant;
+    }
+}

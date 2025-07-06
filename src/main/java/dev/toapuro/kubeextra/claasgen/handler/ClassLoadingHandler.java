@@ -7,7 +7,7 @@ import javassist.CtClass;
 import javax.annotation.Nullable;
 import java.util.Map;
 
-public class ClassLoaderHandler {
+public class ClassLoadingHandler {
     private static @Nullable KubeExtraClassLoader currentClassLoader = null;
 
     public static void setClassLoader(KubeExtraClassLoader classLoader) {

@@ -2,8 +2,8 @@ package dev.toapuro.kubeextra.claasgen.generator;
 
 import dev.toapuro.kubeextra.claasgen.KubeMethod;
 import dev.toapuro.kubeextra.claasgen.annotation.KubeAnnotation;
+import dev.toapuro.kubeextra.claasgen.arguments.MethodParameterTypes;
 import dev.toapuro.kubeextra.claasgen.kubejs.JavaMethodContext;
-import dev.toapuro.kubeextra.claasgen.parameter.MethodParameterTypes;
 import javassist.CtClass;
 import javassist.CtMethod;
 import javassist.bytecode.*;
@@ -16,7 +16,7 @@ import java.util.Map;
 
 public class MethodGenerator {
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodGenerator.class);
-    private Map<KubeMethod, GeneratedMethod> methodCache;
+    protected Map<KubeMethod, GeneratedMethod> methodCache;
 
     public MethodGenerator() {
         this.methodCache = new HashMap<>();
@@ -26,6 +26,43 @@ public class MethodGenerator {
         this.methodCache.clear();
     }
 
+    private static BytecodeLocalStack addLoadBoxedValueFromArgument(Bytecode bytecode, CtClass type, int index) {
+        BytecodeLocalStack localStack = new BytecodeLocalStack();
+        localStack.pushStack();
+
+        if (type == CtClass.intType) {
+            bytecode.addIload(index);
+            bytecode.addInvokestatic("java.lang.Integer", "valueOf", "(I)Ljava/lang/Integer;");
+        } else if (type == CtClass.longType) {
+            bytecode.addLload(index);
+            bytecode.addInvokestatic("java.lang.Long", "valueOf", "(J)Ljava/lang/Long;");
+        } else if (type == CtClass.floatType) {
+            bytecode.addFload(index);
+            bytecode.addInvokestatic("java.lang.Float", "valueOf", "(F)Ljava/lang/Float;");
+        } else if (type == CtClass.doubleType) {
+            bytecode.addDload(index);
+            bytecode.addInvokestatic("java.lang.Double", "valueOf", "(D)Ljava/lang/Double;");
+        } else if (type == CtClass.booleanType) {
+            bytecode.addIload(index);
+            bytecode.addInvokestatic("java.lang.Boolean", "valueOf", "(Z)Ljava/lang/Boolean;");
+        } else if (type == CtClass.charType) {
+            bytecode.addIload(index);
+            bytecode.addInvokestatic("java.lang.Character", "valueOf", "(C)Ljava/lang/Character;");
+        } else if (type == CtClass.byteType) {
+            bytecode.addIload(index);
+            bytecode.addInvokestatic("java.lang.Byte", "valueOf", "(B)Ljava/lang/Byte;");
+        } else if (type == CtClass.shortType) {
+            bytecode.addIload(index);
+            bytecode.addInvokestatic("java.lang.Short", "valueOf", "(S)Ljava/lang/Short;");
+        } else if (!type.isPrimitive()) {
+            bytecode.addAload(index);
+        } else {
+            throw new RuntimeException("Could not find type " + type);
+        }
+
+        return localStack;
+    }
+
     public GeneratedMethod generateMethod(KubeMethod kubeMethod, JavaMethodContext context) {
         if (methodCache.containsKey(kubeMethod)) {
             return methodCache.get(kubeMethod);
@@ -33,114 +70,150 @@ public class MethodGenerator {
 
         CtClass ctClass = context.getParentClass();
 
-        CtClass returnClass = kubeMethod.returnType();
+        CtClass returnClass = kubeMethod.getReturnType();
 
-        MethodParameterTypes parameters = kubeMethod.parameters();
+        MethodParameterTypes parameters = kubeMethod.getParameters();
         CtClass[] paramTypes = parameters.getCtArrayParams();
 
-        CtMethod method = new CtMethod(
+        CtMethod ctMethod = new CtMethod(
                 returnClass,
-                kubeMethod.methodName(),
+                kubeMethod.getMethodName(),
                 paramTypes,
                 ctClass
         );
 
-        for (KubeAnnotation annotation : kubeMethod.annotations()) {
-            context.addAnnotation(annotation.buildAnnotation(ctClass.getClassFile().getConstPool()));
+        for (KubeAnnotation annotation : kubeMethod.getAnnotations()) {
+            context.addAnnotation(annotation);
         }
-        context.buildAnnotations(method);
+        context.buildAnnotations(ctMethod);
 
-        method.setModifiers(kubeMethod.modifiers());
+        ctMethod.setModifiers(kubeMethod.getModifiers());
 
-        writeMethod(kubeMethod, method, paramTypes, context);
+        writeMethod(kubeMethod, ctMethod, context);
 
-        GeneratedMethod generatedMethod = new GeneratedMethod(kubeMethod, method);
+        GeneratedMethod generatedMethod = new GeneratedMethod(kubeMethod, ctMethod);
         methodCache.put(kubeMethod, generatedMethod);
 
         return generatedMethod;
     }
 
-    public void writeMethod(KubeMethod kubeMethod, CtMethod method, CtClass[] paramTypes, JavaMethodContext context) {
+    public BytecodeLocalStack addMethodCallArguments(KubeMethod kubeMethod, Bytecode bytecode, int localOffset) {
+        CtClass[] paramTypes = kubeMethod.getParameters().getCtArrayParams();
+
+        BytecodeLocalStack localStack = new BytecodeLocalStack();
+
+        // new Object[paramTypes.length]
+        // obj[0] = arg0
+        bytecode.addIconst(paramTypes.length);
+        localStack.pushStack();
+        bytecode.addAnewarray("java.lang.Object");
+
+        for (int i = 0; i < paramTypes.length; i++) {
+            bytecode.add(Bytecode.DUP);
+            bytecode.addIconst(i);
+            localStack.pushStack(2);
+
+            // pushStack()
+            localStack.apply(addLoadBoxedValueFromArgument(bytecode, paramTypes[i], localStack.getLocal() + localOffset));
+
+            bytecode.add(Bytecode.AASTORE);
+            localStack.popStack(3);
+            localStack.pushLocal(isWideType(paramTypes[i]) ? 2 : 1);
+        }
+
+        return localStack;
+    }
+
+    public BytecodeLocalStack addHandleMethodCall(KubeMethod kubeMethod, Bytecode bytecode, JavaMethodContext context) {
+        /*
+        Code:
+         KubeJSImplHandler.handleMethodCall(this, className, methodNameDesc, new Object[]{ arg1, arg2 });
+        */
+
+        BytecodeLocalStack localStack = new BytecodeLocalStack();
+
+        int localOffset = 0;
+
+        // load this
+        if (Modifier.isStatic(kubeMethod.getModifiers())) {
+            bytecode.add(Opcode.ACONST_NULL);
+        } else {
+            localOffset++;
+            bytecode.addAload(0);
+        }
+        localStack.pushStack();
+
+        // load className
+        bytecode.addLdc(context.getParentClass().getName());
+        localStack.pushStack();
+
+        // load name + desc
+        bytecode.addLdc(kubeMethod.getMethodName() + kubeMethod.getDescriptor());
+        localStack.pushStack();
+
+        localStack.apply(addMethodCallArguments(kubeMethod, bytecode, localOffset));
+
+        bytecode.addInvokestatic("dev/toapuro/kubeextra/claasgen/kubejs/KubeJSImplHandler", "handleMethodCall",
+                "(Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/Object;");
+        localStack.popStack(4);
+        localStack.pushStack();
+
+        return localStack;
+    }
+
+    public void writeMethod(KubeMethod kubeMethod, CtMethod method, JavaMethodContext context) {
         ConstPool constPool = context.getConstPool();
         MethodInfo methodInfo = method.getMethodInfo();
 
         Bytecode bytecode = new Bytecode(constPool);
 
-        /*
-        Code:
-         KubeJSImplHandler.handleMethodCall(this, className, methodName, new Object[]{ arg1, arg2 });
-        */
+        BytecodeLocalStack localStack = new BytecodeLocalStack();
 
-        // load this
-        if(!Modifier.isStatic(kubeMethod.modifiers())) {
-            bytecode.addAload(0);
+        localStack.apply(addHandleMethodCall(kubeMethod, bytecode, context));
+
+        CtClass returnType = kubeMethod.getReturnType();
+        if (returnType == CtClass.voidType) {
+            bytecode.add(Opcode.POP);
+            localStack.popStack();
+
+            bytecode.add(Bytecode.RETURN);
         } else {
-            bytecode.add(Opcode.ACONST_NULL);
+            localStack.apply(addReturnUnboxed(bytecode, returnType));
         }
-
-        // load className
-        bytecode.addLdc(context.getParentClass().getName());
-
-        // load methodName
-        bytecode.addLdc(method.getName());
-
-        // new Object[paramTypes.length]{}
-        bytecode.addIconst(paramTypes.length);
-        bytecode.addAnewarray("java.lang.Object");
-
-        int localIndex = 1;
-
-        for (int i = 0; i < paramTypes.length; i++) {
-            bytecode.add(Bytecode.DUP);
-            bytecode.addIconst(i);
-
-            loadBoxedValueFromArgument(bytecode, paramTypes[i], localIndex);
-
-            bytecode.add(Bytecode.AASTORE);
-            localIndex += isWideType(paramTypes[i]) ? 2 : 1;
-        }
-
-        bytecode.addInvokestatic("dev.toapuro.kubeextra.claasgen.kubejs.KubeJSImplHandler", "handleMethodCall",
-                "(Ljava/lang/Object;Ljava.lang.String;Ljava.lang.String;[Ljava/lang/Object;)V");
-
-        bytecode.add(Bytecode.RETURN);
 
         CodeAttribute codeAttr = bytecode.toCodeAttribute();
-        codeAttr.setMaxLocals(localIndex);
-        codeAttr.setMaxStack(5); // Hardcoded
+        codeAttr.setMaxLocals(localStack.getMaxLocal() + 3);
+        codeAttr.setMaxStack(localStack.getMaxStack() + 3); // Hardcoded
         methodInfo.setCodeAttribute(codeAttr);
     }
 
-    private static void loadBoxedValueFromArgument(Bytecode bytecode, CtClass type, int localIndex) {
-        if (type == CtClass.intType) {
-            bytecode.addIload(localIndex);
-            bytecode.addInvokestatic("java.lang.Integer", "valueOf", "(I)Ljava/lang/Integer;");
-        } else if (type == CtClass.longType) {
-            bytecode.addLload(localIndex);
-            bytecode.addInvokestatic("java.lang.Long", "valueOf", "(J)Ljava/lang/Long;");
-        } else if (type == CtClass.floatType) {
-            bytecode.addFload(localIndex);
-            bytecode.addInvokestatic("java.lang.Float", "valueOf", "(F)Ljava/lang/Float;");
-        } else if (type == CtClass.doubleType) {
-            bytecode.addDload(localIndex);
-            bytecode.addInvokestatic("java.lang.Double", "valueOf", "(D)Ljava/lang/Double;");
-        } else if (type == CtClass.booleanType) {
-            bytecode.addIload(localIndex);
-            bytecode.addInvokestatic("java.lang.Boolean", "valueOf", "(Z)Ljava/lang/Boolean;");
-        } else if (type == CtClass.charType) {
-            bytecode.addIload(localIndex);
-            bytecode.addInvokestatic("java.lang.Character", "valueOf", "(C)Ljava/lang/Character;");
-        } else if (type == CtClass.byteType) {
-            bytecode.addIload(localIndex);
-            bytecode.addInvokestatic("java.lang.Byte", "valueOf", "(B)Ljava/lang/Byte;");
-        } else if (type == CtClass.shortType) {
-            bytecode.addIload(localIndex);
-            bytecode.addInvokestatic("java.lang.Short", "valueOf", "(S)Ljava/lang/Short;");
-        } else if (!type.isPrimitive()) {
-            bytecode.addAload(localIndex);
+    public BytecodeLocalStack addReturnUnboxed(Bytecode bytecode, CtClass returnValue) {
+        BytecodeLocalStack localStack = new BytecodeLocalStack();
+        localStack.popStack();
+
+        if (returnValue == CtClass.intType) {
+            bytecode.add(Bytecode.IRETURN);
+        } else if (returnValue == CtClass.longType) {
+            bytecode.add(Bytecode.LRETURN);
+        } else if (returnValue == CtClass.floatType) {
+            bytecode.add(Bytecode.FRETURN);
+        } else if (returnValue == CtClass.doubleType) {
+            bytecode.add(Bytecode.DRETURN);
+        } else if (returnValue == CtClass.booleanType) {
+            bytecode.add(Bytecode.IRETURN);
+        } else if (returnValue == CtClass.charType) {
+            bytecode.add(Bytecode.IRETURN);
+        } else if (returnValue == CtClass.byteType) {
+            bytecode.add(Bytecode.IRETURN);
+        } else if (returnValue == CtClass.shortType) {
+            bytecode.add(Bytecode.IRETURN);
+        } else if (!returnValue.isPrimitive()) {
+            bytecode.add(Bytecode.ARETURN);
         } else {
-            throw new RuntimeException("Could not find type " + type);
+            throw new RuntimeException("Could not find type " + returnValue);
         }
+
+        return localStack;
     }
 
     private static boolean isWideType(CtClass type) {

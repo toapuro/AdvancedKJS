@@ -4,7 +4,7 @@ import dev.latvian.mods.kubejs.script.ScriptManager;
 import dev.latvian.mods.rhino.Context;
 import dev.latvian.mods.rhino.NativeJavaClass;
 import dev.latvian.mods.rhino.Scriptable;
-import dev.toapuro.kubeextra.claasgen.handler.ClassLoaderHandler;
+import dev.toapuro.kubeextra.claasgen.handler.ClassLoadingHandler;
 import dev.toapuro.kubeextra.claasgen.handler.KubeExtraClassLoader;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -22,7 +22,8 @@ public class ScriptManagerMixin {
 
     @Inject(method = "loadJavaClass", at = @At("HEAD"), cancellable = true)
     public void loadJavaClass(String name, boolean error, CallbackInfoReturnable<NativeJavaClass> cir) {
-        KubeExtraClassLoader currentClassLoader = ClassLoaderHandler.getCurrentClassLoader();
+        KubeExtraClassLoader currentClassLoader = ClassLoadingHandler.getCurrentClassLoader();
+        if (currentClassLoader == null) return;
         Map<String, Class<?>> classMap = currentClassLoader.getClassLookup();
         if(classMap.containsKey(name)) {
             cir.setReturnValue(

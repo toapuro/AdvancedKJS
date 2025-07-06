@@ -29,7 +29,7 @@ public class JavaClassContext {
     public void buildAnnotations() {
         AnnotationsAttribute attribute = new AnnotationsAttribute(constPool, AnnotationsAttribute.visibleTag);
         for (KubeAnnotation annotation : this.annotations) {
-            attribute.addAnnotation(annotation.buildAnnotation(constPool));
+            attribute.addAnnotation(annotation.compileAnnotation(constPool));
         }
         classFile.addAttribute(attribute);
     }

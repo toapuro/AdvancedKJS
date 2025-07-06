@@ -1,4 +1,4 @@
-package dev.toapuro.kubeextra.claasgen.parameter;
+package dev.toapuro.kubeextra.claasgen.arguments;
 
 import javassist.CtClass;
 
