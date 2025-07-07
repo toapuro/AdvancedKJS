@@ -3,7 +3,7 @@ package dev.toapuro.advancedkjs.kubejs;
 import dev.latvian.mods.kubejs.KubeJSPlugin;
 import dev.latvian.mods.kubejs.script.ScriptType;
 import dev.toapuro.advancedkjs.claasgen.GenHandler;
-import dev.toapuro.advancedkjs.kubejs.event.DatagenRecipeRegisterEvent;
+import dev.toapuro.advancedkjs.kubejs.event.ClassGenRegisterEvent;
 import dev.toapuro.advancedkjs.kubejs.events.KubeClassGenEventsJS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +29,7 @@ public class AdvancedKJSPlugin extends KubeJSPlugin {
     public void initAndApply() {
         GenHandler.init();
 
-        KubeClassGenEventsJS.REGISTER_CLASS_GEN.post(ScriptType.SERVER, new DatagenRecipeRegisterEvent());
+        KubeClassGenEventsJS.REGISTER_CLASS_GEN.post(ScriptType.SERVER, new ClassGenRegisterEvent());
 
         GenHandler.apply();
     }
