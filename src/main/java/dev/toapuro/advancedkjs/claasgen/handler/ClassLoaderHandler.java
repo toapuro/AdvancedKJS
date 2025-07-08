@@ -17,7 +17,7 @@ public class ClassLoaderHandler {
     public static Class<?> defineClass(GeneratedClass generatedClass) {
         if(currentClassLoader == null) return null;
 
-        Map<String, Class<?>> classMap = currentClassLoader.getClassLookup();
+        Map<String, Class<?>> classMap = currentClassLoader.getGenClassLookup();
 
         CtClass ctClass = generatedClass.ctClass();
         ctClass.defrost();

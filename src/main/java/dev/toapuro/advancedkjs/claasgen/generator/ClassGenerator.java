@@ -7,14 +7,11 @@ import dev.toapuro.advancedkjs.claasgen.gens.GenField;
 import dev.toapuro.advancedkjs.claasgen.gens.GenMethod;
 import dev.toapuro.advancedkjs.claasgen.kubejs.JavaClassContext;
 import dev.toapuro.advancedkjs.claasgen.kubejs.JavaMethodContext;
-import dev.toapuro.advancedkjs.claasgen.kubejs.callback.InstantFunction;
 import dev.toapuro.advancedkjs.handler.CtClassLookupHandler;
 import javassist.*;
 import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.ClassFile;
 import javassist.bytecode.ConstPool;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.tree.ClassNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,15 +39,6 @@ public class ClassGenerator {
 
     private void addClassAnnotations(GenClass genClass, JavaClassContext context) {
         genClass.getAnnotations().forEach(context::addAnnotation);
-    }
-
-    public static ClassNode writeClassNode(CtClass ctClass) throws Exception {
-        byte[] bytecode = ctClass.toBytecode();
-        ClassReader reader = new ClassReader(bytecode);
-
-        ClassNode node = new ClassNode();
-        reader.accept(node, ClassReader.EXPAND_FRAMES);
-        return node;
     }
 
     public CtField generateField(CtClass ctClass, ConstPool constPool, GenField field) throws CannotCompileException {
@@ -134,16 +122,7 @@ public class ClassGenerator {
             for (GenField genField : genClass.getFields()) {
                 CtField ctField = generateField(ctClass, constPool, genField);
 
-                Object initialValue = genField.getInitialValue();
-                if (initialValue instanceof InstantFunction instantFunction) {
-                    CtClass kubeJSImplHandler = CtClassLookupHandler.lookupOrThrow("dev.toapuro.advancedkjs.claasgen.kubejs.KubeJSImplHandler");
-
-                    ctClass.addField(ctField, CtField.Initializer.byCallWithParams(kubeJSImplHandler, "handleInstantCall", new String[]{
-                            "this", genClass.getFqcn(), Integer.toString(instantFunction.instantId()), "new Object[0]"
-                    }));
-                } else {
-                    ctClass.addField(ctField);
-                }
+                ctClass.addField(ctField);
             }
         } catch (Exception e) {
             LOGGER.error("Could not add fields in class {}", genClass.getClassName(), e);

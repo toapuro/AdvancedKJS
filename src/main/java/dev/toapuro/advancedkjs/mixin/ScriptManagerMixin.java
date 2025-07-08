@@ -24,7 +24,7 @@ public class ScriptManagerMixin {
     public void loadJavaClass(String name, boolean error, CallbackInfoReturnable<NativeJavaClass> cir) {
         AdvancedKJSClassLoader currentClassLoader = ClassLoaderHandler.getCurrentClassLoader();
         if (currentClassLoader == null) return;
-        Map<String, Class<?>> classMap = currentClassLoader.getClassLookup();
+        Map<String, Class<?>> classMap = currentClassLoader.getGenClassLookup();
         if(classMap.containsKey(name)) {
             cir.setReturnValue(
                     new NativeJavaClass(this.context, this.topLevelScope, classMap.get(name))

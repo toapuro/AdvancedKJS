@@ -11,17 +11,13 @@ import java.lang.instrument.Instrumentation;
 import java.lang.instrument.UnmodifiableClassException;
 import java.util.stream.IntStream;
 
+@SuppressWarnings("unused")
 public class AgentTransformer {
     private static final Logger LOGGER = LoggerFactory.getLogger(AgentTransformer.class);
-    public static AgentTransformer INSTANCE;
-
+    public static AgentTransformer INSTANCE = new AgentTransformer();
     private Instrumentation instrumentation;
-    private boolean loaded;
-
 
     public AgentTransformer() {
-        INSTANCE = this;
-        this.loaded = false;
     }
 
     private static Byte[] toBoxedByteArray(byte[] bytes) {
@@ -65,17 +61,20 @@ public class AgentTransformer {
             Object transformerObject = ReflectionUtil.constructor(transformerClass)
                     .newInstance();
 
-            CommonUtil.castSafe(ClassFileTransformer.class, transformerObject).ifPresent(transformer -> {
-                retransformClasses(new Class<?>[]{}, transformer);
-            });
+            CommonUtil.castSafe(ClassFileTransformer.class, transformerObject).ifPresent(transformer ->
+                    retransformClasses(new Class<?>[]{}, transformer)
+            );
         } catch (ClassNotFoundException e) {
             LOGGER.error("Could not transform class");
             throw new RuntimeException(e);
         }
     }
 
+    public boolean isLoaded() {
+        return this.instrumentation != null;
+    }
+
     public void init(Instrumentation instrumentation) {
         this.instrumentation = instrumentation;
-        this.loaded = true;
     }
 }

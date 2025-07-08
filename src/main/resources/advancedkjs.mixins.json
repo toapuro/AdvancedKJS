@@ -5,8 +5,10 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "advancedkjs.refmap.json",
   "mixins": [
+    "RecipeManagerMixin",
     "RecipesEventJSMixin",
-    "ScriptManagerMixin"
+    "ScriptManagerMixin",
+    "TypeWrappersMixin"
   ],
   "client": [
   ],

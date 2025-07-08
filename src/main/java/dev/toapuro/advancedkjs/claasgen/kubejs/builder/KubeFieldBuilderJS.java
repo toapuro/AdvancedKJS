@@ -1,7 +1,6 @@
 package dev.toapuro.advancedkjs.claasgen.kubejs.builder;
 
 import dev.latvian.mods.kubejs.event.EventJS;
-import dev.latvian.mods.rhino.BaseFunction;
 import dev.latvian.mods.rhino.Context;
 import dev.toapuro.advancedkjs.claasgen.annotation.KubeAnnotation;
 import dev.toapuro.advancedkjs.claasgen.gens.GenClass;
@@ -50,25 +49,20 @@ public class KubeFieldBuilderJS extends EventJS implements IModifierBuilder<Kube
     }
 
     public Result build() {
-        return new Result(genClass, fieldName, annotations, null, modifiers);
+        return new Result(genClass, fieldName, annotations, modifiers);
     }
 
-    public Result build(BaseFunction baseFunction) {
-        return new Result(genClass, fieldName, annotations, baseFunction, modifiers);
-    }
 
     public static class Result {
         private final GenClass genClass;
         private final String fieldName;
         private final List<KubeAnnotation> annotations;
-        private final BaseFunction function;
         private final int modifiers;
 
-        public Result(GenClass genClass, String fieldName, List<KubeAnnotation> annotations, BaseFunction function, int modifiers) {
+        public Result(GenClass genClass, String fieldName, List<KubeAnnotation> annotations, int modifiers) {
             this.genClass = genClass;
             this.fieldName = fieldName;
             this.annotations = annotations;
-            this.function = function;
             this.modifiers = modifiers;
         }
 
@@ -82,10 +76,6 @@ public class KubeFieldBuilderJS extends EventJS implements IModifierBuilder<Kube
 
         public List<KubeAnnotation> getAnnotations() {
             return annotations;
-        }
-
-        public BaseFunction getFunction() {
-            return function;
         }
 
         public int getModifiers() {

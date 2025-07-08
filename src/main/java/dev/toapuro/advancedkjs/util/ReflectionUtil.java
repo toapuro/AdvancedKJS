@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Field;
 import java.util.Optional;
 
+@SuppressWarnings("unused")
 public class ReflectionUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(ReflectionUtil.class);
 
@@ -29,9 +30,9 @@ public class ReflectionUtil {
 
     public static <T> void setFieldValue(Class<?> clazz, Object object, String name, T value) {
         try {
-            Field Field = clazz.getDeclaredField(name);
-            Field.setAccessible(true);
-            Field.set(object, object);
+            Field field = clazz.getDeclaredField(name);
+            field.setAccessible(true);
+            field.set(object, value);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             LOGGER.error("Cant get field {} in {}", name, clazz, e);
             throw new RuntimeException(e);

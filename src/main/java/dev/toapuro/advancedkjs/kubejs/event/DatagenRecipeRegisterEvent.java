@@ -10,8 +10,9 @@ import net.minecraft.data.recipes.FinishedRecipe;
 
 import java.util.function.Consumer;
 
+@SuppressWarnings("unused")
 public class DatagenRecipeRegisterEvent extends EventJS {
-    public final RecipesEventJS recipeEvent;
+    private final RecipesEventJS recipeEvent;
     public final Consumer<FinishedRecipe> writer = this::finalize;
 
     public DatagenRecipeRegisterEvent(RecipesEventJS recipeEvent) {
@@ -20,7 +21,6 @@ public class DatagenRecipeRegisterEvent extends EventJS {
 
     public void finalize(FinishedRecipe finishedRecipe) {
         JsonObject serialized = finishedRecipe.serializeRecipe();
-        recipeEvent.custom(serialized);
 
         try {
             if (serialized.has("type")) {

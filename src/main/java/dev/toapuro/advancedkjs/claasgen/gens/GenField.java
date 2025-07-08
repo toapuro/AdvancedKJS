@@ -9,14 +9,12 @@ import java.util.List;
 public class GenField {
     private final CtClass fieldType;
     private final String fieldName;
-    private final Object initialValue;
     private final List<KubeAnnotation> annotations;
     private final int modifiers;
 
-    public GenField(CtClass fieldType, String fieldName, Object initialValue, int modifiers) {
+    public GenField(CtClass fieldType, String fieldName, int modifiers) {
         this.fieldType = fieldType;
         this.fieldName = fieldName;
-        this.initialValue = initialValue;
         this.annotations = new ArrayList<>();
         this.modifiers = modifiers;
     }
@@ -31,10 +29,6 @@ public class GenField {
 
     public String getFieldName() {
         return fieldName;
-    }
-
-    public Object getInitialValue() {
-        return initialValue;
     }
 
     public List<KubeAnnotation> getAnnotations() {

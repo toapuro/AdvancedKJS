@@ -6,5 +6,5 @@ import dev.toapuro.advancedkjs.kubejs.event.DatagenRecipeRegisterEvent;
 
 public class DatagenEventsJS {
     public static EventGroup GROUP = EventGroup.of("DatagenEvents");
-    public static EventHandler DATAGEN_RECIPE = GROUP.common("recipes", () -> DatagenRecipeRegisterEvent.class).hasResult();
+    public static EventHandler DATAGEN_RECIPE = GROUP.server("recipes", () -> DatagenRecipeRegisterEvent.class);
 }

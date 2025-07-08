@@ -13,7 +13,6 @@ import dev.toapuro.advancedkjs.claasgen.gens.GenField;
 import dev.toapuro.advancedkjs.claasgen.gens.GenMethod;
 import dev.toapuro.advancedkjs.claasgen.kubejs.callback.CallbackClass;
 import dev.toapuro.advancedkjs.claasgen.kubejs.callback.CallbackMethod;
-import dev.toapuro.advancedkjs.claasgen.kubejs.callback.ConstantFunction;
 import dev.toapuro.advancedkjs.claasgen.kubejs.callback.InstantFunction;
 import dev.toapuro.advancedkjs.handler.CtClassLookupHandler;
 import dev.toapuro.advancedkjs.util.MethodDescriptorParser;
@@ -23,8 +22,6 @@ import javassist.NotFoundException;
 import javassist.bytecode.Descriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nullable;
 
 @SuppressWarnings("unused")
 public class KubeClassBuilderJS extends EventJS implements IModifierBuilder<KubeClassBuilderJS>, IAnnotationBuilder<KubeClassBuilderJS> {
@@ -83,7 +80,7 @@ public class KubeClassBuilderJS extends EventJS implements IModifierBuilder<Kube
         if (resultObj instanceof KubeFieldBuilderJS.Result result) {
             CtClass fieldClass = CtClassLookupHandler.lookupOrMake(fieldType);
 
-            GenField genField = new GenField(fieldClass, fieldName, result.getFunction(), modifiers);
+            GenField genField = new GenField(fieldClass, fieldName, modifiers);
 
             for (KubeAnnotation annotation : result.getAnnotations()) {
                 genField.addAnnotation(annotation);
@@ -95,35 +92,6 @@ public class KubeClassBuilderJS extends EventJS implements IModifierBuilder<Kube
         } else {
             throw new RuntimeException("Could not build field");
         }
-    }
-
-    public KubeClassBuilderJS field(String fieldName, String fieldType) {
-        return field(fieldName, fieldType, null, 0);
-    }
-
-    public KubeClassBuilderJS field(String fieldName, String fieldType, Object initialObj) {
-        return field(fieldName, fieldType, initialObj, 0);
-    }
-
-    public KubeClassBuilderJS field(String fieldName, String fieldType, int modifiers) {
-        return field(fieldName, fieldType, null, modifiers);
-    }
-
-    public KubeClassBuilderJS field(String fieldName, String fieldType, @Nullable Object initialObj, int modifiers) {
-        CtClass fieldClass = CtClassLookupHandler.lookupOrMake(fieldType);
-
-        Object initialFieldValue = null;
-
-        if (initialObj instanceof BaseFunction baseFunction) {
-            initialFieldValue = genClass.pushInstantFunction(baseFunction);
-        } else if (initialObj != null) {
-            initialFieldValue = genClass.pushInstantFunction(new ConstantFunction(initialObj));
-        }
-
-        GenField genField = new GenField(fieldClass, fieldName, initialFieldValue, modifiers);
-
-        genClass.addField(genField);
-        return this;
     }
 
     public KubeClassBuilderJS constructor(String descriptor, BaseFunction buildingFunction) {
