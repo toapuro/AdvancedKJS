@@ -5,6 +5,7 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "advancedkjs.refmap.json",
   "mixins": [
+    "JavaMembersMixin",
     "RecipeManagerMixin",
     "RecipesEventJSMixin",
     "ScriptManagerMixin",

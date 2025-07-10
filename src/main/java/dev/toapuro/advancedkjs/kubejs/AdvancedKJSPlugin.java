@@ -3,16 +3,17 @@ package dev.toapuro.advancedkjs.kubejs;
 import dev.latvian.mods.kubejs.KubeJSPlugin;
 import dev.latvian.mods.kubejs.script.BindingsEvent;
 import dev.latvian.mods.kubejs.script.ScriptType;
-import dev.toapuro.advancedkjs.claasgen.GenHandler;
+import dev.toapuro.advancedkjs.bytes.claasgen.GenHandler;
 import dev.toapuro.advancedkjs.kubejs.event.ClassGenRegisterEvent;
-import dev.toapuro.advancedkjs.kubejs.events.DatagenEventsJS;
-import dev.toapuro.advancedkjs.kubejs.events.KubeClassGenEventsJS;
+import dev.toapuro.advancedkjs.kubejs.group.DatagenEventsJS;
+import dev.toapuro.advancedkjs.kubejs.group.KubeClassGenEventsJS;
 import dev.toapuro.advancedkjs.resolution.TypeJS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AdvancedKJSPlugin extends KubeJSPlugin {
     private static final Logger LOGGER = LoggerFactory.getLogger(AdvancedKJSPlugin.class);
+    private static final String ISSUE_URL = "https://github.com/toapuro/AdvancedKJS/issues";
 
     @Override
     public void registerEvents() {
@@ -36,10 +37,14 @@ public class AdvancedKJSPlugin extends KubeJSPlugin {
     }
 
     public void initAndApply() {
-        GenHandler.init();
+        if(getClass().getClassLoader().getResource("javassist") != null) {
+            GenHandler.init();
 
-        KubeClassGenEventsJS.REGISTER_CLASS_GEN.post(ScriptType.SERVER, new ClassGenRegisterEvent());
+            KubeClassGenEventsJS.REGISTER_CLASS_GEN.post(ScriptType.SERVER, new ClassGenRegisterEvent());
 
-        GenHandler.apply();
+            GenHandler.apply();
+        } else {
+            throw new RuntimeException("Javassist not loaded. Issue -> " + ISSUE_URL);
+        }
     }
 }

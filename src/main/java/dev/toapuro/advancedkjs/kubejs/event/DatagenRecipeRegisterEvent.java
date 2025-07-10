@@ -2,6 +2,7 @@ package dev.toapuro.advancedkjs.kubejs.event;
 
 import com.google.gson.JsonObject;
 import dev.latvian.mods.kubejs.event.EventJS;
+import dev.latvian.mods.kubejs.player.PlayerAdvancementEventJS;
 import dev.latvian.mods.kubejs.recipe.RecipeExceptionJS;
 import dev.latvian.mods.kubejs.recipe.RecipeJS;
 import dev.latvian.mods.kubejs.recipe.RecipeTypeFunction;

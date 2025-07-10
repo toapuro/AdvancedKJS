@@ -4,7 +4,7 @@ import com.google.gson.JsonElement;
 import dev.latvian.mods.kubejs.recipe.RecipesEventJS;
 import dev.latvian.mods.kubejs.script.ScriptType;
 import dev.toapuro.advancedkjs.kubejs.event.DatagenRecipeRegisterEvent;
-import dev.toapuro.advancedkjs.kubejs.events.DatagenEventsJS;
+import dev.toapuro.advancedkjs.kubejs.group.DatagenEventsJS;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeManager;
 import org.spongepowered.asm.mixin.Mixin;

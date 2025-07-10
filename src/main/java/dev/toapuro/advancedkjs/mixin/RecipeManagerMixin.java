@@ -5,7 +5,7 @@ import dev.latvian.mods.kubejs.bindings.event.ServerEvents;
 import dev.latvian.mods.kubejs.recipe.RecipesEventJS;
 import dev.latvian.mods.kubejs.util.ConsoleJS;
 import dev.latvian.mods.kubejs.util.UtilsJS;
-import dev.toapuro.advancedkjs.kubejs.events.DatagenEventsJS;
+import dev.toapuro.advancedkjs.kubejs.group.DatagenEventsJS;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
