@@ -1,3 +1,5 @@
+//file:noinspection GrUnresolvedAccess
+//file:noinspection GroovyAssignabilityCheck
 plugins {
     id 'idea'
     id 'java-library'
@@ -97,6 +99,9 @@ dependencies {
     modImplementation("curse.maven:architectury-api-419699:5137938")
 
     externalLib("org.javassist:javassist:3.30.2-GA")
+
+    //noinspection VulnerableLibrariesLocal
+    externalLib("io.mvnpm:esbuild-java:1.5.3")
 }
 
 def externalLib(String depNotation) {

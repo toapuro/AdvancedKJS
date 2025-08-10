@@ -1,1 +1,1 @@
-dev.toapuro.advancedkjs.kubejs.AdvancedKJSPlugin
+dev.toapuro.advancedkjs.content.kubejs.AdvancedKJSPlugin

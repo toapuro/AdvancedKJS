@@ -8,17 +8,13 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.spongepowered.asm.mixin.injection.points.BeforeInvoke;
 
-// The value here should match an entry in the META-INF/mods.toml file
 @Mod(AdvancedKJS.MODID)
-public class AdvancedKJS
-{
+public class AdvancedKJS {
     public static final String MODID = "advancedkjs";
-    private static final Logger LOGGER = LoggerFactory.getLogger(AdvancedKJS.class);
+    public static final String ISSUE_URL = "https://github.com/toapuro/AdvancedKJS/issues";
 
+    @SuppressWarnings("removal")
     public AdvancedKJS() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 

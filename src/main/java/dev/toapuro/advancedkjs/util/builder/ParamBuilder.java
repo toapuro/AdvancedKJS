@@ -3,7 +3,7 @@ package dev.toapuro.advancedkjs.util.builder;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class ParamBuilder<SELF extends ParamBuilder<SELF>> {
+public abstract class ParamBuilder<BUILDER extends ParamBuilder<BUILDER>> {
     private final List<Class<?>> paramTypes;
     private final List<Object> param;
 
@@ -12,12 +12,11 @@ public abstract class ParamBuilder<SELF extends ParamBuilder<SELF>> {
         this.param = new ArrayList<>();
     }
 
-    public abstract SELF self();
-
-    public <U, T extends U> SELF param(Class<U> paramClass , T tValue) {
+    @SuppressWarnings("unchecked")
+    public <U, T extends U> BUILDER param(Class<U> paramClass, T tValue) {
         this.paramTypes.add(paramClass);
         this.param.add(tValue);
-        return self();
+        return (BUILDER) this;
     }
 
     protected List<Class<?>> getParamTypes() {

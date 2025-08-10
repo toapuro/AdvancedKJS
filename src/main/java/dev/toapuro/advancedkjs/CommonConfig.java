@@ -5,7 +5,7 @@ import net.minecraftforge.common.ForgeConfigSpec;
 public class CommonConfig {
     public static CommonConfig CONFIG = new CommonConfig();
 
-    private ForgeConfigSpec spec;
+    private final ForgeConfigSpec spec;
 
     public CommonConfig() {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();

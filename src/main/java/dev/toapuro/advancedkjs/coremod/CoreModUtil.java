@@ -15,7 +15,7 @@ import java.lang.reflect.Field;
 import java.util.Objects;
 
 public class CoreModUtil {
-    private static Logger LOGGER = LoggerFactory.getLogger(CoreModUtil.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CoreModUtil.class);
     
     public static void runAgent() {
         LOGGER.info("Starting agent");

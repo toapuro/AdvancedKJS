@@ -1,15 +1,18 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "dev.toapuro.advancedkjs.mixin",
+  "package": "dev.toapuro.advancedkjs.mixin.core",
   "compatibilityLevel": "JAVA_8",
   "refmap": "advancedkjs.refmap.json",
   "mixins": [
     "JavaMembersMixin",
+    "NativeJavaObjectMixin",
     "RecipeManagerMixin",
     "RecipesEventJSMixin",
     "ScriptManagerMixin",
-    "TypeWrappersMixin"
+    "TypeWrappersMixin",
+    "accessor.JavaMembersAccessor",
+    "accessor.ScriptManagerAccessor"
   ],
   "client": [
   ],

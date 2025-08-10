@@ -1,7 +1,7 @@
 package dev.toapuro.advancedkjs.util;
 
-import dev.toapuro.advancedkjs.util.builder.ConstructionBuilder;
-import dev.toapuro.advancedkjs.util.builder.MethodInvocationBuilder;
+import dev.toapuro.advancedkjs.util.builder.ConstructorAccessBuilder;
+import dev.toapuro.advancedkjs.util.builder.MethodAccessBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,12 +43,12 @@ public class ReflectionUtil {
         setFieldValue(clazz, null, name, value);
     }
 
-    public static <T> MethodInvocationBuilder<T> methodInvocation(Class<T> tClass, String methodName) {
-        return new MethodInvocationBuilder<>(tClass, methodName);
+    public static <T> MethodAccessBuilder<T> methodInvocation(Class<T> tClass, String methodName) {
+        return new MethodAccessBuilder<>(tClass, methodName);
     }
 
-    public static <T> ConstructionBuilder<T> constructor(Class<T> tClass) {
-        return new ConstructionBuilder<>(tClass);
+    public static <T> ConstructorAccessBuilder<T> constructor(Class<T> tClass) {
+        return new ConstructorAccessBuilder<>(tClass);
     }
 
     public static Optional<Class<?>> getClass(String className) {
