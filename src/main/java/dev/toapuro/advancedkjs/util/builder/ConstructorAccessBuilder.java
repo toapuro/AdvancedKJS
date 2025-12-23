@@ -14,7 +14,7 @@ public class ConstructorAccessBuilder<C> extends ParamBuilder<ConstructorAccessB
         this.clazz = clazz;
     }
 
-    public ConstructorAccessBuilder<C> withDeclared() {
+    public ConstructorAccessBuilder<C> declared() {
         this.declaredConstructor = true;
         return this;
     }

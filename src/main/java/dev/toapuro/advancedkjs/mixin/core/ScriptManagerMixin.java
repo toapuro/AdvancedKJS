@@ -1,25 +1,22 @@
 package dev.toapuro.advancedkjs.mixin.core;
 
-import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import dev.latvian.mods.kubejs.script.*;
 import dev.latvian.mods.kubejs.util.ConsoleJS;
-import dev.latvian.mods.rhino.Context;
-import dev.latvian.mods.rhino.NativeJavaClass;
-import dev.latvian.mods.rhino.Scriptable;
-import dev.toapuro.advancedkjs.content.claasgen.handler.AdvancedKJSClassLoader;
-import dev.toapuro.advancedkjs.content.claasgen.handler.ClassLoaderHandler;
+import dev.toapuro.advancedkjs.api.config.SWCConfigFileGenerator;
+import dev.toapuro.advancedkjs.content.js.LoadedScriptSource;
 import dev.toapuro.advancedkjs.content.js.bundle.SourceBundleHandler;
 import dev.toapuro.advancedkjs.content.js.bundle.pack.AdvancedKubeJSPaths;
-import dev.toapuro.advancedkjs.content.js.swc.SWCHandler;
+import dev.toapuro.advancedkjs.content.js.swc.SWCCommandHandler;
 import dev.toapuro.advancedkjs.mixin.helper.IMixin;
 import net.minecraft.server.packs.resources.ResourceManager;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("CommentedOutCode")
@@ -27,11 +24,7 @@ import java.util.Map;
 @Debug(export = true)
 public abstract class ScriptManagerMixin implements IMixin<ScriptManager> {
     @Unique
-    public final SWCHandler akjs$swcHandler = new SWCHandler("compile");
-    @Shadow
-    public Scriptable topLevelScope;
-    @Shadow
-    public Context context;
+    public final SWCCommandHandler akjs$swcCommandHandler = new SWCCommandHandler("compile");
     @Shadow
     @Final
     public ScriptType scriptType;
@@ -43,15 +36,32 @@ public abstract class ScriptManagerMixin implements IMixin<ScriptManager> {
     @Unique
     public Path akjs$scriptSourcePath;
 
-    @ModifyExpressionValue(method = "lambda$loadFromResources$0", at = {
-            @At(value = "INVOKE", target = "Ljava/lang/String;endsWith(Ljava/lang/String;)Z", ordinal = 1)
-    })
-    private static boolean disableTsFile(boolean original) {
-        return false;
-    }
+    @Inject(method = "loadFile", at = @At(value = "HEAD"), cancellable = true)
+    public void loadFile(ScriptPack pack, ScriptFileInfo fileInfo, ScriptSource rawSource, CallbackInfo ci) throws IOException {
+        if (!fileInfo.file.endsWith(".ts")) {
+            return;
+        }
 
-    @Inject(method = "loadFromResources", at = @At(value = "HEAD"))
-    public void loadFromResources(ResourceManager resourceManager, CallbackInfo ci) {
+        List<String> rawLines = rawSource.readSource(fileInfo);
+
+        // compile
+        List<String> outputLines = akjs$swcCommandHandler.compileScript(rawLines, akjs$scriptSourcePath);
+
+        ScriptSource source = new LoadedScriptSource(outputLines);
+
+        try {
+            fileInfo.preload(source);
+            String skip = fileInfo.skipLoading();
+            if (skip.isEmpty()) {
+                pack.scripts.add(new ScriptFile(pack, fileInfo, source));
+            } else {
+                this.scriptType.console.info("Skipped " + fileInfo.location + ": " + skip);
+            }
+        } catch (Throwable error) {
+            this.scriptType.console.error("Failed to pre-load script file '" + fileInfo.location + "'", error);
+        }
+
+        ci.cancel();
     }
 
     @Inject(method = "<init>", at = @At(value = "TAIL"))
@@ -64,32 +74,19 @@ public abstract class ScriptManagerMixin implements IMixin<ScriptManager> {
 
     @Inject(method = "reload", at = @At(value = "INVOKE", target = "Ldev/latvian/mods/kubejs/script/ScriptManager;loadFromDirectory()V"))
     public void beforeLoad(ResourceManager resourceManager, CallbackInfo ci) {
+        SWCConfigFileGenerator.GENERATOR.createIfNotExists();
+
         String namespace = "build." + scriptType.name;
 
         ConsoleJS console = scriptType.console;
         console.info("Building sources");
         ScriptPack loadedPack = akjs$bundleHandler.bundleScripts(castSelf());
-        ScriptPack compiledPack = akjs$swcHandler.compileScripts(castSelf(), loadedPack, akjs$scriptSourcePath);
+        ScriptPack compiledPack = akjs$swcCommandHandler.compileScripts(castSelf(), loadedPack, akjs$scriptSourcePath);
+        if (compiledPack == null) {
+            console.info("Failed to build sources");
+            return;
+        }
 
         packs.put(namespace, compiledPack);
-    }
-
-    @Inject(method = "loadFile", at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z"), cancellable = true)
-    public void loadFile(ScriptPack pack, ScriptFileInfo fileInfo, ScriptSource source, CallbackInfo ci) {
-        if (fileInfo.file.endsWith(".ts")) {
-            ci.cancel();
-        }
-    }
-
-    @Inject(method = "loadJavaClass", at = @At("HEAD"), cancellable = true)
-    public void loadJavaClass(String name, boolean error, CallbackInfoReturnable<NativeJavaClass> cir) {
-        AdvancedKJSClassLoader currentClassLoader = ClassLoaderHandler.getCurrentClassLoader();
-        if (currentClassLoader == null) return;
-        Map<String, Class<?>> classMap = currentClassLoader.getGenClassLookup();
-        if (classMap.containsKey(name)) {
-            cir.setReturnValue(
-                    new NativeJavaClass(this.context, this.topLevelScope, classMap.get(name))
-            );
-        }
     }
 }

@@ -34,24 +34,25 @@ public class CoreModUtil {
 
         try {
             // Create a temp file to get absolute file path
-            File file = File.createTempFile("advancedkjs_agent", ".jar");
-            FileOutputStream fos = new FileOutputStream(file);
-            InputStream is = AdvancedKJS.class.getResourceAsStream("/AdvancedKJSAgent-1.0.jar");
-            if(Objects.isNull(is)) {
+            File tempFile = File.createTempFile("advancedkjs_agent", ".jar");
+            FileOutputStream tempFileStream = new FileOutputStream(tempFile);
+            InputStream stream = AdvancedKJS.class.getResourceAsStream("/AdvancedKJSAgent-1.0.jar");
+            if (Objects.isNull(stream)) {
                 LOGGER.error("Failed to get agent jar");
                 return;
             }
 
+            // resource -> temp file
             int r;
-            while((r = is.read()) != -1) {
-                fos.write(r);
+            while ((r = stream.read()) != -1) {
+                tempFileStream.write(r);
             }
 
-            fos.close();
-            is.close();
-            LOGGER.info("Attaching agent ({})", file.getAbsolutePath());
+            tempFileStream.close();
+            stream.close();
+            LOGGER.info("Attaching agent ({})", tempFile.getAbsolutePath());
             VirtualMachine vm = VirtualMachine.attach(pid);
-            vm.loadAgent(file.getAbsolutePath(), "");
+            vm.loadAgent(tempFile.getAbsolutePath(), "");
             LOGGER.info("Attached agent");
             vm.detach();
         } catch (Exception e) {

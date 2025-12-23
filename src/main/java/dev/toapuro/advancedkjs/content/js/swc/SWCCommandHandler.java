@@ -17,13 +17,13 @@ import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
-public class SWCHandler {
+public class SWCCommandHandler {
     private static final Path swcExecPath = SWCLibLoader.downloadSwcFile();
-    private static final Logger LOGGER = LoggerFactory.getLogger(SWCHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SWCCommandHandler.class);
 
     private final String subcommand;
 
-    public SWCHandler(String subcommand) {
+    public SWCCommandHandler(String subcommand) {
         this.subcommand = subcommand;
     }
 
@@ -111,6 +111,20 @@ public class SWCHandler {
             throw new RuntimeException(e);
         }
         return loadedPack;
+    }
+
+    public List<String> compileScript(List<String> inputLines, Path sourcePath) {
+        String inputSource = Joiner.on("\n").join(inputLines);
+
+        String fileName = "index" + ".js";
+        List<String> built = this.run(sourcePath, inputSource, List.of(
+                "-f", fileName
+        ));
+        if (!built.isEmpty()) {
+            built.remove(0);
+        }
+
+        return built;
     }
 
     public ScriptPack loadOutputFile(String namespace, ScriptManager scriptManager, Path sourcePath) {

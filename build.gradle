@@ -22,9 +22,30 @@ repositories {
         url = "https://repo.spongepowered.org/maven"
     }
 
-    maven {
-        url "https://cursemaven.com"
+    exclusiveContent {
+        forRepository {
+            maven {
+                url "https://cursemaven.com"
+            }
+        }
+        filter {
+            includeGroup "curse.maven"
+        }
     }
+
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = "Modrinth"
+                url = "https://api.modrinth.com/maven"
+            }
+        }
+        filter {
+            includeGroup "maven.modrinth"
+        }
+    }
+
+
 }
 
 base {
@@ -98,10 +119,13 @@ dependencies {
     modImplementation("curse.maven:kubejs-238086:${kubejs_version}")
     modImplementation("curse.maven:architectury-api-419699:5137938")
 
-    externalLib("org.javassist:javassist:3.30.2-GA")
+    // Optional
+    modImplementation("maven.modrinth:classjs:0.1-alpha.5")
 
     //noinspection VulnerableLibrariesLocal
     externalLib("io.mvnpm:esbuild-java:1.5.3")
+
+
 }
 
 def externalLib(String depNotation) {

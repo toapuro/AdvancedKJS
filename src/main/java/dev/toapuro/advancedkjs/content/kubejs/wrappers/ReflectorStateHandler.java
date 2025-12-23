@@ -1,6 +1,6 @@
 package dev.toapuro.advancedkjs.content.kubejs.wrappers;
 
-public class ReflectorStateHelper {
+public class ReflectorStateHandler {
     private static boolean reflected = false;
 
     public static boolean isReflected() {
@@ -8,6 +8,6 @@ public class ReflectorStateHelper {
     }
 
     public static void setReflected(boolean reflected) {
-        ReflectorStateHelper.reflected = reflected;
+        ReflectorStateHandler.reflected = reflected;
     }
 }

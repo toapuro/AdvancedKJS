@@ -5,7 +5,7 @@ import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import dev.latvian.mods.rhino.Context;
 import dev.latvian.mods.rhino.JavaMembers;
-import dev.toapuro.advancedkjs.content.kubejs.wrappers.ReflectorStateHelper;
+import dev.toapuro.advancedkjs.content.kubejs.wrappers.ReflectorStateHandler;
 import dev.toapuro.advancedkjs.content.reflector.FieldExtraInfo;
 import dev.toapuro.advancedkjs.mixin.helper.IMixin;
 import org.spongepowered.asm.mixin.Mixin;
@@ -70,7 +70,7 @@ public abstract class JavaMembersMixin implements IMixin<JavaMembers> {
     public Collection<JavaMembers.MethodInfo> modifyMethods(Collection<JavaMembers.MethodInfo> original) {
         return original.stream()
                 .filter(methodInfo -> {
-                    return !methodInfo.hidden || ReflectorStateHelper.isReflected();
+                    return !methodInfo.hidden || ReflectorStateHandler.isReflected();
                 })
                 .toList();
     }
@@ -80,7 +80,7 @@ public abstract class JavaMembersMixin implements IMixin<JavaMembers> {
         return original.stream()
                 .filter(fieldInfo -> {
                     if (fieldInfo instanceof FieldExtraInfo extraInfo) {
-                        return !extraInfo.hidden || ReflectorStateHelper.isReflected();
+                        return !extraInfo.hidden || ReflectorStateHandler.isReflected();
                     }
                     return true;
                 })

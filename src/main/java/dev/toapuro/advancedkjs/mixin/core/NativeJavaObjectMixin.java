@@ -4,7 +4,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import dev.latvian.mods.rhino.*;
 import dev.toapuro.advancedkjs.content.kubejs.wrappers.ReflectorJS;
-import dev.toapuro.advancedkjs.content.kubejs.wrappers.ReflectorStateHelper;
+import dev.toapuro.advancedkjs.content.kubejs.wrappers.ReflectorStateHandler;
 import dev.toapuro.advancedkjs.mixin.core.accessor.JavaMembersAccessor;
 import dev.toapuro.advancedkjs.mixin.helper.IMixin;
 import org.slf4j.Logger;
@@ -71,12 +71,12 @@ public abstract class NativeJavaObjectMixin implements IMixin<NativeJavaObject> 
             this.javaObject = reflectorJS.unwrap();
             this.staticType = reflectorJS.unwrap().getClass();
 
-            ReflectorStateHelper.setReflected(true);
+            ReflectorStateHandler.setReflected(true);
 
             try {
                 akjs$initReflectedMembers(context, scope);
             } finally {
-                ReflectorStateHelper.setReflected(false);
+                ReflectorStateHandler.setReflected(false);
             }
         } else {
             operation.call(instance, context, scope);

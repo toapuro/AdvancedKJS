@@ -27,7 +27,7 @@ public class SourceBundleRuntime {
         this.scriptType = scriptType;
         this.sourcePath = sourcePath;
         this.buildPath = buildPath;
-        this.wrapper = new ESBuildRuntimeWrapper(wrapper, sourcePath, entryPoints, Map.of());
+        this.wrapper = new ESBuildRuntimeWrapper(wrapper, entryPoints, Map.of());
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
@@ -48,19 +48,20 @@ public class SourceBundleRuntime {
 
         this.deleteBuildFiles();
 
-        String output;
         try {
-            output = wrapper.run(sourcePath);
+
+            wrapper.run(sourcePath);
         } catch (IOException e) {
             LOGGER.error("Error occurred bundling sources", e);
             throw new RuntimeException(e);
         }
 
-        LOGGER.info("Files bundled: {}", output);
+        File[] files = Optional.ofNullable(buildPathFile.listFiles((dir, name) -> name.endsWith(".js"))).orElse(new File[0]);
+
+        LOGGER.info("Files bundled: {}", files.length);
 
         List<SourceBundle> sourceBundles = new ArrayList<>();
-
-        for (File file : Optional.ofNullable(buildPathFile.listFiles((dir, name) -> name.endsWith(".js"))).orElse(new File[0])) {
+        for (File file : files) {
             List<String> lines = new ArrayList<>();
 
             try (BufferedReader br = new BufferedReader(new FileReader(file))) {

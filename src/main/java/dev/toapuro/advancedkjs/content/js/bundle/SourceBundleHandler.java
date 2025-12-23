@@ -55,8 +55,9 @@ public class SourceBundleHandler {
             }
         }
 
-        if (Files.notExists(sourcePath.resolve(ENTRY_POINT))) {
-            try (OutputStream out = Files.newOutputStream(sourcePath.resolve(ENTRY_POINT))) {
+        Path entryPath = sourcePath.resolve(ENTRY_POINT);
+        if (Files.notExists(entryPath)) {
+            try (OutputStream out = Files.newOutputStream(entryPath)) {
                 String content = String.format("// %s entry point", scriptType);
                 out.write(content.getBytes(StandardCharsets.UTF_8));
             } catch (Exception ex) {
@@ -84,6 +85,7 @@ public class SourceBundleHandler {
 
         for (SourceBundle bundle : bundles) {
             ScriptFileInfo fileInfo = new ScriptFileInfo(packInfo, bundle.name());
+
             BundleScriptSource source = new BundleScriptSource(bundle);
             fileInfo.preload(source);
 

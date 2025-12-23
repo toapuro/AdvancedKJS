@@ -15,15 +15,13 @@ public class ESBuildRuntimeWrapper {
     private static final Logger LOGGER = LoggerFactory.getLogger(ESBuildRuntimeWrapper.class);
 
     private final ESBuildWrapper wrapper;
-    private final Path sourcePath;
     private final List<String> entryPoints;
     private final EsBuildConfig config;
 
     private final Map<String, String> valueDefinitions;
 
-    public ESBuildRuntimeWrapper(ESBuildWrapper wrapper, Path sourcePath, List<String> entryPoints, Map<String, String> valueDefinitions) {
+    public ESBuildRuntimeWrapper(ESBuildWrapper wrapper, List<String> entryPoints, Map<String, String> valueDefinitions) {
         this.wrapper = wrapper;
-        this.sourcePath = sourcePath;
         this.entryPoints = entryPoints;
         this.valueDefinitions = valueDefinitions;
         this.config = buildConfig();

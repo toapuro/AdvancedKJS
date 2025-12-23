@@ -43,7 +43,7 @@ public class ReflectionUtil {
         setFieldValue(clazz, null, name, value);
     }
 
-    public static <T> MethodAccessBuilder<T> methodInvocation(Class<T> tClass, String methodName) {
+    public static <T> MethodAccessBuilder<T> method(Class<T> tClass, String methodName) {
         return new MethodAccessBuilder<>(tClass, methodName);
     }
 

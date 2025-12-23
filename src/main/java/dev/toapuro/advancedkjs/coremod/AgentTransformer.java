@@ -1,7 +1,5 @@
 package dev.toapuro.advancedkjs.coremod;
 
-import dev.toapuro.advancedkjs.util.CommonUtil;
-import dev.toapuro.advancedkjs.util.ReflectionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,22 +49,6 @@ public class AgentTransformer {
             instrumentation.redefineClasses(new ClassDefinition(clazz, bytes));
         } catch (ClassNotFoundException | UnmodifiableClassException e) {
             throw new RuntimeException("Could not redefine class " + clazz, e);
-        }
-    }
-
-    public void transformClasses() {
-        try {
-            Class<?> transformerClass = Class.forName("org.spongepowered.tools.agent.MixinAgent$Transformer");
-
-            Object transformerObject = ReflectionUtil.constructor(transformerClass)
-                    .newInstance();
-
-            CommonUtil.castSafe(ClassFileTransformer.class, transformerObject).ifPresent(transformer ->
-                    retransformClasses(new Class<?>[]{}, transformer)
-            );
-        } catch (ClassNotFoundException e) {
-            LOGGER.error("Could not transform class");
-            throw new RuntimeException(e);
         }
     }
 
