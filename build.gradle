@@ -121,6 +121,7 @@ dependencies {
 
     // Optional
     modImplementation("maven.modrinth:classjs:0.1-alpha.5")
+    modImplementation("curse.maven:probejs-585406:5227399")
 
     //noinspection VulnerableLibrariesLocal
     externalLib("io.mvnpm:esbuild-java:1.5.3")
