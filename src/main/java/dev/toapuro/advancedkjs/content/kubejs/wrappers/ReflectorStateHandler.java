@@ -1,13 +1,13 @@
 package dev.toapuro.advancedkjs.content.kubejs.wrappers;
 
 public class ReflectorStateHandler {
-    private static boolean reflected = false;
+    private static boolean ignoreInaccessible = false;
 
-    public static boolean isReflected() {
-        return reflected;
+    public static boolean isIgnoreInaccessible() {
+        return ignoreInaccessible;
     }
 
-    public static void setReflected(boolean reflected) {
-        ReflectorStateHandler.reflected = reflected;
+    public static void setIgnoreInaccessible(boolean ignoreInaccessible) {
+        ReflectorStateHandler.ignoreInaccessible = ignoreInaccessible;
     }
 }

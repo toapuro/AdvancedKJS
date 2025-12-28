@@ -7,8 +7,9 @@ import dev.toapuro.advancedkjs.content.js.bundle.pack.AdvancedKubeJSPaths;
 import java.nio.file.Path;
 
 public class SWCConfigFileGenerator extends ConfigFileGenerator {
-    public static Path CONFIG_PATH = AdvancedKubeJSPaths.SRC.resolve(".swcrc");
-    public static SWCConfigFileGenerator GENERATOR = new SWCConfigFileGenerator(CONFIG_PATH);
+    public static SWCConfigFileGenerator DEFAULT = new SWCConfigFileGenerator(
+            AdvancedKubeJSPaths.SRC.resolve(".swcrc")
+    );
 
     public SWCConfigFileGenerator(Path path) {
         super(path);

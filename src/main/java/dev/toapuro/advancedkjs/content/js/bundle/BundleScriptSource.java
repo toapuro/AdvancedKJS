@@ -6,10 +6,10 @@ import dev.latvian.mods.kubejs.script.ScriptSource;
 import java.io.IOException;
 import java.util.List;
 
-public record BundleScriptSource(SourceBundle sourceBundle) implements ScriptSource {
+public record BundleScriptSource(BundleSource bundleSource) implements ScriptSource {
 
     @Override
     public List<String> readSource(ScriptFileInfo scriptFileInfo) throws IOException {
-        return sourceBundle.lines();
+        return bundleSource.lines();
     }
 }

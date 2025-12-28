@@ -5,7 +5,6 @@ import dev.latvian.mods.kubejs.recipe.RecipesEventJS;
 import dev.latvian.mods.kubejs.script.ScriptType;
 import dev.toapuro.advancedkjs.content.kubejs.event.DatagenRecipeRegisterEvent;
 import dev.toapuro.advancedkjs.content.kubejs.group.DatagenEventsJS;
-import dev.toapuro.advancedkjs.mixin.helper.IMixin;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeManager;
 import org.spongepowered.asm.mixin.Mixin;
@@ -16,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.Map;
 
 @Mixin(value = RecipesEventJS.class, remap = false)
-public class RecipesEventJSMixin implements IMixin<RecipesEventJS> {
+public class RecipesEventJSMixin {
     @Inject(method = "post", at = @At(
             value = "INVOKE",
             target = "Ldev/latvian/mods/kubejs/event/EventHandler;post(Ldev/latvian/mods/kubejs/script/ScriptTypeHolder;Ldev/latvian/mods/kubejs/event/EventJS;)Ldev/latvian/mods/kubejs/event/EventResult;",

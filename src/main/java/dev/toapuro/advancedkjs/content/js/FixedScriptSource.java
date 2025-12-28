@@ -6,7 +6,7 @@ import dev.latvian.mods.kubejs.script.ScriptSource;
 import java.io.IOException;
 import java.util.List;
 
-public record LoadedScriptSource(List<String> lines) implements ScriptSource {
+public record FixedScriptSource(List<String> lines) implements ScriptSource {
 
     @Override
     public List<String> readSource(ScriptFileInfo scriptFileInfo) throws IOException {

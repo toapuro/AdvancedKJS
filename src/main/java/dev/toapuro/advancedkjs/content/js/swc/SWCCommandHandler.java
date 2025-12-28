@@ -3,7 +3,7 @@ package dev.toapuro.advancedkjs.content.js.swc;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import dev.latvian.mods.kubejs.script.*;
-import dev.toapuro.advancedkjs.content.js.LoadedScriptSource;
+import dev.toapuro.advancedkjs.content.js.FixedScriptSource;
 import io.mvnpm.esbuild.BundleException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -146,7 +146,7 @@ public class SWCCommandHandler {
             }
 
             ScriptFileInfo fileInfo = new ScriptFileInfo(outputPack.info, file.getName());
-            outputPack.scripts.add(new ScriptFile(outputPack, fileInfo, new LoadedScriptSource(lines)));
+            outputPack.scripts.add(new ScriptFile(outputPack, fileInfo, new FixedScriptSource(lines)));
         }
 
         return outputPack;

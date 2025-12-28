@@ -7,7 +7,6 @@ import dev.latvian.mods.rhino.Context;
 import dev.latvian.mods.rhino.JavaMembers;
 import dev.toapuro.advancedkjs.content.kubejs.wrappers.ReflectorStateHandler;
 import dev.toapuro.advancedkjs.content.reflector.FieldExtraInfo;
-import dev.toapuro.advancedkjs.mixin.helper.IMixin;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -22,12 +21,12 @@ import java.util.LinkedHashMap;
 
 @SuppressWarnings("deprecation")
 @Mixin(value = JavaMembers.class, remap = false)
-public abstract class JavaMembersMixin implements IMixin<JavaMembers> {
+public abstract class JavaMembersMixin {
+
     @Redirect(method = "getAccessibleMethods", at = @At(value = "INVOKE", target = "Ljava/lang/reflect/Modifier;isPublic(I)Z"))
     public boolean modifyMethodPublic(int mod, @Local Class<?> currentClass) {
         return true;
     }
-
 
     @Redirect(method = "getAccessibleFields", at = @At(value = "INVOKE", target = "Ljava/lang/reflect/Modifier;isPublic(I)Z"))
     public boolean modifyFieldPublic(int mod, @Local Class<?> currentClass) {
@@ -70,7 +69,7 @@ public abstract class JavaMembersMixin implements IMixin<JavaMembers> {
     public Collection<JavaMembers.MethodInfo> modifyMethods(Collection<JavaMembers.MethodInfo> original) {
         return original.stream()
                 .filter(methodInfo -> {
-                    return !methodInfo.hidden || ReflectorStateHandler.isReflected();
+                    return !methodInfo.hidden || ReflectorStateHandler.isIgnoreInaccessible();
                 })
                 .toList();
     }
@@ -80,7 +79,7 @@ public abstract class JavaMembersMixin implements IMixin<JavaMembers> {
         return original.stream()
                 .filter(fieldInfo -> {
                     if (fieldInfo instanceof FieldExtraInfo extraInfo) {
-                        return !extraInfo.hidden || ReflectorStateHandler.isReflected();
+                        return !extraInfo.hidden || ReflectorStateHandler.isIgnoreInaccessible();
                     }
                     return true;
                 })

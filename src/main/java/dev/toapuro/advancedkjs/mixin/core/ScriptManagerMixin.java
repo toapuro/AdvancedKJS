@@ -3,11 +3,11 @@ package dev.toapuro.advancedkjs.mixin.core;
 import dev.latvian.mods.kubejs.script.*;
 import dev.latvian.mods.kubejs.util.ConsoleJS;
 import dev.toapuro.advancedkjs.api.config.SWCConfigFileGenerator;
-import dev.toapuro.advancedkjs.content.js.LoadedScriptSource;
+import dev.toapuro.advancedkjs.content.js.FixedScriptSource;
 import dev.toapuro.advancedkjs.content.js.bundle.SourceBundleHandler;
 import dev.toapuro.advancedkjs.content.js.bundle.pack.AdvancedKubeJSPaths;
 import dev.toapuro.advancedkjs.content.js.swc.SWCCommandHandler;
-import dev.toapuro.advancedkjs.mixin.helper.IMixin;
+import dev.toapuro.advancedkjs.mixin.helper.MixinUtil;
 import net.minecraft.server.packs.resources.ResourceManager;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
@@ -22,15 +22,17 @@ import java.util.Map;
 @SuppressWarnings("CommentedOutCode")
 @Mixin(value = ScriptManager.class, remap = false)
 @Debug(export = true)
-public abstract class ScriptManagerMixin implements IMixin<ScriptManager> {
-    @Unique
-    public final SWCCommandHandler akjs$swcCommandHandler = new SWCCommandHandler("compile");
+public abstract class ScriptManagerMixin {
+
     @Shadow
     @Final
     public ScriptType scriptType;
     @Shadow
     @Final
     public Map<String, ScriptPack> packs;
+
+    @Unique
+    public final SWCCommandHandler akjs$swcCommandHandler = new SWCCommandHandler("compile");
     @Unique
     public SourceBundleHandler akjs$bundleHandler;
     @Unique
@@ -41,13 +43,12 @@ public abstract class ScriptManagerMixin implements IMixin<ScriptManager> {
         if (!fileInfo.file.endsWith(".ts")) {
             return;
         }
-
         List<String> rawLines = rawSource.readSource(fileInfo);
 
         // compile
         List<String> outputLines = akjs$swcCommandHandler.compileScript(rawLines, akjs$scriptSourcePath);
 
-        ScriptSource source = new LoadedScriptSource(outputLines);
+        ScriptSource source = new FixedScriptSource(outputLines);
 
         try {
             fileInfo.preload(source);
@@ -74,14 +75,19 @@ public abstract class ScriptManagerMixin implements IMixin<ScriptManager> {
 
     @Inject(method = "reload", at = @At(value = "INVOKE", target = "Ldev/latvian/mods/kubejs/script/ScriptManager;loadFromDirectory()V"))
     public void beforeLoad(ResourceManager resourceManager, CallbackInfo ci) {
-        SWCConfigFileGenerator.GENERATOR.createIfNotExists();
+        ScriptManager scriptManager = MixinUtil.cast(this);
+
+        SWCConfigFileGenerator.DEFAULT.createIfNotExists();
+        akjs$bundleHandler.createExampleFiles();
 
         String namespace = "build." + scriptType.name;
 
         ConsoleJS console = scriptType.console;
-        console.info("Building sources");
-        ScriptPack loadedPack = akjs$bundleHandler.bundleScripts(castSelf());
-        ScriptPack compiledPack = akjs$swcCommandHandler.compileScripts(castSelf(), loadedPack, akjs$scriptSourcePath);
+        console.info("Bundling sources");
+        ScriptPack bundledPack = akjs$bundleHandler.bundleScripts(scriptManager);
+
+        console.info("Compiling sources to typescript");
+        ScriptPack compiledPack = akjs$swcCommandHandler.compileScripts(scriptManager, bundledPack, akjs$scriptSourcePath);
         if (compiledPack == null) {
             console.info("Failed to build sources");
             return;

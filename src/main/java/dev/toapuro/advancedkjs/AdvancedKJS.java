@@ -14,7 +14,6 @@ public class AdvancedKJS {
     public static final String MODID = "advancedkjs";
     public static final String ISSUE_URL = "https://github.com/toapuro/AdvancedKJS/issues";
 
-    @SuppressWarnings("removal")
     public AdvancedKJS() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 

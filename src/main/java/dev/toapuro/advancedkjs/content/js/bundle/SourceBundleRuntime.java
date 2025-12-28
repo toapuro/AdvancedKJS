@@ -43,13 +43,12 @@ public class SourceBundleRuntime {
         }
     }
 
-    public List<SourceBundle> resolveBuild() {
+    public List<BundleSource> buildBundles() {
         File buildPathFile = buildPath.resolve("bundle").toFile();
 
         this.deleteBuildFiles();
 
         try {
-
             wrapper.run(sourcePath);
         } catch (IOException e) {
             LOGGER.error("Error occurred bundling sources", e);
@@ -60,7 +59,7 @@ public class SourceBundleRuntime {
 
         LOGGER.info("Files bundled: {}", files.length);
 
-        List<SourceBundle> sourceBundles = new ArrayList<>();
+        List<BundleSource> bundleSources = new ArrayList<>();
         for (File file : files) {
             List<String> lines = new ArrayList<>();
 
@@ -74,11 +73,11 @@ public class SourceBundleRuntime {
                 throw new RuntimeException(e);
             }
 
-            SourceBundle bundle = new SourceBundle(this, file.getName(), lines);
-            sourceBundles.add(bundle);
+            BundleSource bundle = new BundleSource(this, file.getName(), lines);
+            bundleSources.add(bundle);
         }
 
-        return sourceBundles;
+        return bundleSources;
     }
 
     public ScriptType getScriptType() {

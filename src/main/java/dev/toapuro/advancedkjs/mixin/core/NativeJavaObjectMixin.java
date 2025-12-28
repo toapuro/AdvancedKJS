@@ -6,9 +6,7 @@ import dev.latvian.mods.rhino.*;
 import dev.toapuro.advancedkjs.content.kubejs.wrappers.ReflectorJS;
 import dev.toapuro.advancedkjs.content.kubejs.wrappers.ReflectorStateHandler;
 import dev.toapuro.advancedkjs.mixin.core.accessor.JavaMembersAccessor;
-import dev.toapuro.advancedkjs.mixin.helper.IMixin;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import dev.toapuro.advancedkjs.mixin.helper.MixinUtil;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -19,8 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.Map;
 
 @Mixin(value = NativeJavaObject.class, remap = false)
-public abstract class NativeJavaObjectMixin implements IMixin<NativeJavaObject> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(NativeJavaObjectMixin.class);
+public abstract class NativeJavaObjectMixin {
 
     @Shadow
     protected transient Object javaObject;
@@ -71,12 +68,12 @@ public abstract class NativeJavaObjectMixin implements IMixin<NativeJavaObject> 
             this.javaObject = reflectorJS.unwrap();
             this.staticType = reflectorJS.unwrap().getClass();
 
-            ReflectorStateHandler.setReflected(true);
+            ReflectorStateHandler.setIgnoreInaccessible(true);
 
             try {
                 akjs$initReflectedMembers(context, scope);
             } finally {
-                ReflectorStateHandler.setReflected(false);
+                ReflectorStateHandler.setIgnoreInaccessible(false);
             }
         } else {
             operation.call(instance, context, scope);
@@ -93,7 +90,8 @@ public abstract class NativeJavaObjectMixin implements IMixin<NativeJavaObject> 
         }
 
         this.members = akjs$lookupReflectedClass(cx, scope, dynamicType, this.staticType, this.isAdapter);
-        this.fieldAndMethods = this.members.getFieldAndMethodsObjects(castSelf(), this.javaObject, false, cx);
+        this.fieldAndMethods = this.members.getFieldAndMethodsObjects(
+                MixinUtil.cast(this), this.javaObject, false, cx);
         this.customMembers = null;
     }
 
