@@ -64,6 +64,10 @@ public class SWCCommandHandler {
 
     @SuppressWarnings("UnusedReturnValue")
     public List<String> run(Path workDir, String source, List<String> args) {
+        if (source.isEmpty()) {
+            return List.of();
+        }
+
         try {
             Process process = createProcess(buildCommands(args), workDir);
 
