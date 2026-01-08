@@ -19,20 +19,20 @@ import java.util.Optional;
 public class SourceBundleRuntime {
     private static final Logger LOGGER = LoggerFactory.getLogger(SourceBundleRuntime.class);
     private final ScriptType scriptType;
-    private final Path sourcePath;
-    private final Path buildPath;
+    private final Path rootPath;
+    private final Path outputPath;
     private final ESBuildRuntimeWrapper wrapper;
 
-    public SourceBundleRuntime(ESBuildWrapper wrapper, ScriptType scriptType, Path sourcePath, Path buildPath, List<String> entryPoints) {
+    public SourceBundleRuntime(ESBuildWrapper wrapper, ScriptType scriptType, Path rootPath, Path outputPath, List<String> entryPoints) {
         this.scriptType = scriptType;
-        this.sourcePath = sourcePath;
-        this.buildPath = buildPath;
+        this.rootPath = rootPath;
+        this.outputPath = outputPath;
         this.wrapper = new ESBuildRuntimeWrapper(wrapper, entryPoints, Map.of());
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public void deleteBuildFiles() {
-        File buildPathFile = buildPath.toFile();
+        File buildPathFile = outputPath.toFile();
 
         if (buildPathFile.isDirectory()) {
             File[] files = buildPathFile.listFiles();
@@ -44,12 +44,12 @@ public class SourceBundleRuntime {
     }
 
     public List<BundleSource> buildBundles() {
-        File buildPathFile = buildPath.resolve("bundle").toFile();
+        File buildPathFile = outputPath.resolve("bundle").toFile();
 
         this.deleteBuildFiles();
 
         try {
-            wrapper.run(sourcePath);
+            wrapper.run(rootPath);
         } catch (IOException e) {
             LOGGER.error("Error occurred bundling sources", e);
             throw new RuntimeException(e);
@@ -84,8 +84,8 @@ public class SourceBundleRuntime {
         return scriptType;
     }
 
-    public Path getSourcePath() {
-        return sourcePath;
+    public Path getRootPath() {
+        return rootPath;
     }
 
     public ESBuildRuntimeWrapper getWrapper() {

@@ -2,6 +2,7 @@ package dev.toapuro.advancedkjs.api.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,14 +23,24 @@ public abstract class ConfigFileGenerator {
 
     }
 
-    public static JsonObject inObject(UnaryOperator<JsonObject> configOperator) {
+    protected static JsonObject object(UnaryOperator<JsonObject> configOperator) {
         return configOperator.apply(new JsonObject());
     }
 
-    public static JsonObject inObject(Consumer<JsonObject> consumer) {
+    protected static JsonObject object(Consumer<JsonObject> consumer) {
         JsonObject jsonObject = new JsonObject();
         consumer.accept(jsonObject);
         return jsonObject;
+    }
+
+    protected static JsonArray array(UnaryOperator<JsonArray> configOperator) {
+        return configOperator.apply(new JsonArray());
+    }
+
+    protected static JsonArray array(Consumer<JsonArray> consumer) {
+        JsonArray array = new JsonArray();
+        consumer.accept(array);
+        return array;
     }
 
     public void createIfNotExists() {

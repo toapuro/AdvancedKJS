@@ -7,9 +7,11 @@ import java.nio.file.Path;
 
 public interface AdvancedKubeJSPaths extends KubeJSPaths {
     Path SRC = DIRECTORY.resolve("src/");
-    Path STARTUP_SCRIPTS = DIRECTORY.resolve("src/startup_scripts");
-    Path SERVER_SCRIPTS = DIRECTORY.resolve("src/server_scripts");
-    Path CLIENT_SCRIPTS = DIRECTORY.resolve("src/client_scripts");
+
+    // src/
+    Path STARTUP_SCRIPTS = SRC.resolve("startup_scripts");
+    Path SERVER_SCRIPTS = SRC.resolve("server_scripts");
+    Path CLIENT_SCRIPTS = SRC.resolve("client_scripts");
 
     static Path fromScriptType(ScriptType scriptType) {
         return switch (scriptType) {

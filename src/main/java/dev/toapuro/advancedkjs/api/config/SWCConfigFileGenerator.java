@@ -17,11 +17,11 @@ public class SWCConfigFileGenerator extends ConfigFileGenerator {
 
     @Override
     public JsonObject buildDefaultConfig() {
-        return inObject(root -> {
+        return object(root -> {
             root.addProperty("$schema", "https://swc.rs/schema.json");
 
-            root.add("jsc", inObject(jsc -> {
-                jsc.add("parser", inObject(parser -> {
+            root.add("jsc", object(jsc -> {
+                jsc.add("parser", object(parser -> {
                     parser.addProperty("syntax", "typescript");
                     parser.addProperty("jsx", false);
                     parser.addProperty("dynamicImport", false);

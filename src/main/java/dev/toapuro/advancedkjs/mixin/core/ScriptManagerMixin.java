@@ -7,6 +7,7 @@ import dev.toapuro.advancedkjs.content.js.FixedScriptSource;
 import dev.toapuro.advancedkjs.content.js.bundle.SourceBundleHandler;
 import dev.toapuro.advancedkjs.content.js.bundle.pack.AdvancedKubeJSPaths;
 import dev.toapuro.advancedkjs.content.js.swc.SWCCommandHandler;
+import dev.toapuro.advancedkjs.content.js.typejs.TypeJSConfigGenerator;
 import dev.toapuro.advancedkjs.mixin.helper.MixinUtil;
 import net.minecraft.server.packs.resources.ResourceManager;
 import org.spongepowered.asm.mixin.*;
@@ -68,17 +69,19 @@ public abstract class ScriptManagerMixin {
     @Inject(method = "<init>", at = @At(value = "TAIL"))
     public void init(ScriptType t, CallbackInfo ci) {
         this.akjs$scriptSourcePath = AdvancedKubeJSPaths.fromScriptType(scriptType);
-        this.akjs$bundleHandler = new SourceBundleHandler(scriptType, akjs$scriptSourcePath);
+        this.akjs$bundleHandler = new SourceBundleHandler(scriptType, AdvancedKubeJSPaths.SRC, akjs$scriptSourcePath);
 
         akjs$bundleHandler.init();
+
+        TypeJSConfigGenerator.DEFAULT.createIfNotExists();
+        SWCConfigFileGenerator.DEFAULT.createIfNotExists();
+        akjs$bundleHandler.createExampleFiles();
     }
 
     @Inject(method = "reload", at = @At(value = "INVOKE", target = "Ldev/latvian/mods/kubejs/script/ScriptManager;loadFromDirectory()V"))
     public void beforeLoad(ResourceManager resourceManager, CallbackInfo ci) {
         ScriptManager scriptManager = MixinUtil.cast(this);
 
-        SWCConfigFileGenerator.DEFAULT.createIfNotExists();
-        akjs$bundleHandler.createExampleFiles();
 
         String namespace = "build." + scriptType.name;
 

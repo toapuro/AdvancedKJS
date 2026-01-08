@@ -36,8 +36,8 @@ public class AdvancedKJSPlugin extends KubeJSPlugin {
             }
             Object fromObj = Context.jsToJava(context, from, Object.class);
             if (fromObj instanceof TypeJS typeJS) {
-                if (typeJS.validateTarget(target)) {
-                    event.setValue((cx, ignored) -> typeJS.getValue());
+                if (typeJS._validateTarget(target)) {
+                    event.setValue((cx, ignored) -> typeJS._getValue());
                 } else {
                     event.setValue(null);
                 }

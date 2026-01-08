@@ -18,16 +18,20 @@ import java.util.List;
 
 public class SourceBundleHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(SourceBundleHandler.class);
-    private static final String ENTRY_POINT = "index.ts";
+    private static final String ENTRYPOINT_FILE = "index.ts";
 
     private final ESBuildWrapper esBuild;
     private final SourceBundleRuntime runtime;
 
-    public SourceBundleHandler(ScriptType scriptType, Path sourcePath) {
+    private final Path sourcePath;
+
+    public SourceBundleHandler(ScriptType scriptType, Path rootPath, Path sourcePath) {
         this.esBuild = new ESBuildWrapper();
         this.runtime = new SourceBundleRuntime(
-                esBuild, scriptType, sourcePath, sourcePath.resolve("build"), List.of(ENTRY_POINT)
+                esBuild, scriptType, rootPath, sourcePath.resolve("build"),
+                List.of(sourcePath.resolve(ENTRYPOINT_FILE).toString())
         );
+        this.sourcePath = sourcePath;
     }
 
     public void init() {
@@ -38,41 +42,18 @@ public class SourceBundleHandler {
         ScriptType scriptType = runtime.getScriptType();
 
         try {
-            return buildBundles(scriptManager, runtime);
+            return buildBundles(scriptManager);
         } catch (Throwable e) {
             LOGGER.error("Failed to load bundle file {}", scriptType, e);
             throw new RuntimeException(e);
         }
     }
 
-    public void createExampleFiles() {
-        ScriptType scriptType = runtime.getScriptType();
-        Path sourcePath = runtime.getSourcePath();
-
-        if (Files.notExists(sourcePath)) {
-            try {
-                Files.createDirectories(sourcePath);
-            } catch (Exception ex) {
-                LOGGER.error("Failed to create script directory", ex);
-            }
-        }
-
-        Path entryPath = sourcePath.resolve(ENTRY_POINT);
-        if (Files.notExists(entryPath)) {
-            try (OutputStream out = Files.newOutputStream(entryPath)) {
-                String content = String.format("// %s entry point", scriptType);
-                out.write(content.getBytes(StandardCharsets.UTF_8));
-            } catch (Exception ex) {
-                LOGGER.error("Failed to write bundle file {}", scriptType, ex);
-            }
-        }
-    }
-
-    public BundleScriptPack buildBundles(ScriptManager scriptManager, SourceBundleRuntime bundleRuntime) throws Throwable {
-        BundleScriptPackInfo packInfo = new BundleScriptPackInfo("build.bundle." + bundleRuntime.getScriptType().name, "");
+    public BundleScriptPack buildBundles(ScriptManager scriptManager) throws Throwable {
+        BundleScriptPackInfo packInfo = new BundleScriptPackInfo("build.bundle." + runtime.getScriptType().name, "");
         BundleScriptPack pack = new BundleScriptPack(scriptManager, packInfo);
 
-        List<BundleSource> bundles = bundleRuntime.buildBundles();
+        List<BundleSource> bundles = runtime.buildBundles();
 
         for (BundleSource bundle : bundles) {
             ScriptFileInfo fileInfo = new ScriptFileInfo(packInfo, bundle.name());
@@ -84,5 +65,27 @@ public class SourceBundleHandler {
         }
 
         return pack;
+    }
+
+    public void createExampleFiles() {
+        ScriptType scriptType = runtime.getScriptType();
+
+        if (Files.notExists(sourcePath)) {
+            try {
+                Files.createDirectories(sourcePath);
+            } catch (Exception ex) {
+                LOGGER.error("Failed to create script directory", ex);
+            }
+        }
+
+        Path entryPath = sourcePath.resolve(ENTRYPOINT_FILE);
+        if (Files.notExists(entryPath)) {
+            try (OutputStream out = Files.newOutputStream(entryPath)) {
+                String content = String.format("// %s entry point", scriptType);
+                out.write(content.getBytes(StandardCharsets.UTF_8));
+            } catch (Exception ex) {
+                LOGGER.error("Failed to write bundle file {}", scriptType, ex);
+            }
+        }
     }
 }
