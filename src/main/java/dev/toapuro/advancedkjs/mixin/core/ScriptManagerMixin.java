@@ -2,12 +2,12 @@ package dev.toapuro.advancedkjs.mixin.core;
 
 import dev.latvian.mods.kubejs.script.*;
 import dev.latvian.mods.kubejs.util.ConsoleJS;
-import dev.toapuro.advancedkjs.api.config.SWCConfigFileGenerator;
-import dev.toapuro.advancedkjs.content.js.FixedScriptSource;
-import dev.toapuro.advancedkjs.content.js.bundle.SourceBundleHandler;
-import dev.toapuro.advancedkjs.content.js.bundle.pack.AdvancedKubeJSPaths;
-import dev.toapuro.advancedkjs.content.js.swc.SWCCommandHandler;
-import dev.toapuro.advancedkjs.content.js.typejs.TypeJSConfigGenerator;
+import dev.toapuro.advancedkjs.content.typejs.FixedScriptSource;
+import dev.toapuro.advancedkjs.content.typejs.bundle.SourceBundleHandler;
+import dev.toapuro.advancedkjs.content.typejs.bundle.pack.AdvancedKubeJSPaths;
+import dev.toapuro.advancedkjs.content.typejs.config.SWCConfigFileGenerator;
+import dev.toapuro.advancedkjs.content.typejs.config.TypeJSConfigGenerator;
+import dev.toapuro.advancedkjs.content.typejs.swc.SWCCommandHandler;
 import dev.toapuro.advancedkjs.mixin.helper.MixinUtil;
 import net.minecraft.server.packs.resources.ResourceManager;
 import org.spongepowered.asm.mixin.*;

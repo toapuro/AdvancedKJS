@@ -1,4 +1,4 @@
-package dev.toapuro.advancedkjs.content.js.swc;
+package dev.toapuro.advancedkjs.content.typejs.swc;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

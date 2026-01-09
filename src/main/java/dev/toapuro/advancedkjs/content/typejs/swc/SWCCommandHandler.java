@@ -1,9 +1,9 @@
-package dev.toapuro.advancedkjs.content.js.swc;
+package dev.toapuro.advancedkjs.content.typejs.swc;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import dev.latvian.mods.kubejs.script.*;
-import dev.toapuro.advancedkjs.content.js.FixedScriptSource;
+import dev.toapuro.advancedkjs.content.typejs.FixedScriptSource;
 import io.mvnpm.esbuild.BundleException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

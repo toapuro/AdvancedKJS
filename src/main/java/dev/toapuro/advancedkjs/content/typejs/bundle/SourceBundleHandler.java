@@ -1,12 +1,12 @@
-package dev.toapuro.advancedkjs.content.js.bundle;
+package dev.toapuro.advancedkjs.content.typejs.bundle;
 
 import dev.latvian.mods.kubejs.script.ScriptFile;
 import dev.latvian.mods.kubejs.script.ScriptFileInfo;
 import dev.latvian.mods.kubejs.script.ScriptManager;
 import dev.latvian.mods.kubejs.script.ScriptType;
-import dev.toapuro.advancedkjs.content.js.bundle.esbuild.ESBuildWrapper;
-import dev.toapuro.advancedkjs.content.js.bundle.pack.BundleScriptPack;
-import dev.toapuro.advancedkjs.content.js.bundle.pack.BundleScriptPackInfo;
+import dev.toapuro.advancedkjs.content.typejs.bundle.esbuild.ESBuildWrapper;
+import dev.toapuro.advancedkjs.content.typejs.bundle.pack.BundleScriptPack;
+import dev.toapuro.advancedkjs.content.typejs.bundle.pack.BundleScriptPackInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,4 +1,4 @@
-package dev.toapuro.advancedkjs.content.js.bundle.esbuild;
+package dev.toapuro.advancedkjs.content.typejs.bundle.esbuild;
 
 import io.mvnpm.esbuild.model.EsBuildConfig;
 import io.mvnpm.esbuild.model.EsBuildConfigBuilder;

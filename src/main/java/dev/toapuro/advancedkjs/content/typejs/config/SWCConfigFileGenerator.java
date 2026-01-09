@@ -1,8 +1,9 @@
-package dev.toapuro.advancedkjs.api.config;
+package dev.toapuro.advancedkjs.content.typejs.config;
 
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
-import dev.toapuro.advancedkjs.content.js.bundle.pack.AdvancedKubeJSPaths;
+import dev.toapuro.advancedkjs.api.config.ConfigFileGenerator;
+import dev.toapuro.advancedkjs.content.typejs.bundle.pack.AdvancedKubeJSPaths;
 
 import java.nio.file.Path;
 

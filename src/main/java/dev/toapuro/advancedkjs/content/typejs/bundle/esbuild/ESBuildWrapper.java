@@ -1,4 +1,4 @@
-package dev.toapuro.advancedkjs.content.js.bundle.esbuild;
+package dev.toapuro.advancedkjs.content.typejs.bundle.esbuild;
 
 import com.google.errorprone.annotations.concurrent.LazyInit;
 import io.mvnpm.esbuild.Execute;

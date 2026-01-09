@@ -1,4 +1,4 @@
-package dev.toapuro.advancedkjs.content.js.bundle;
+package dev.toapuro.advancedkjs.content.typejs.bundle;
 
 import java.util.List;
 

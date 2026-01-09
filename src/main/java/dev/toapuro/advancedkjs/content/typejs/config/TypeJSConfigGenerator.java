@@ -1,9 +1,8 @@
-package dev.toapuro.advancedkjs.content.js.typejs;
+package dev.toapuro.advancedkjs.content.typejs.config;
 
 import com.google.gson.JsonObject;
 import dev.latvian.mods.kubejs.KubeJSPaths;
 import dev.toapuro.advancedkjs.api.config.ConfigFileGenerator;
-import dev.toapuro.advancedkjs.api.config.SWCConfigFileGenerator;
 
 import java.nio.file.Path;
 

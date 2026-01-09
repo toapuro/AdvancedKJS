@@ -1,4 +1,4 @@
-package dev.toapuro.advancedkjs.content.js.bundle.pack;
+package dev.toapuro.advancedkjs.content.typejs.bundle.pack;
 
 import dev.latvian.mods.kubejs.script.ScriptManager;
 import dev.latvian.mods.kubejs.script.ScriptPack;

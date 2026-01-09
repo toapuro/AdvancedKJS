@@ -1,8 +1,8 @@
-package dev.toapuro.advancedkjs.content.js.bundle;
+package dev.toapuro.advancedkjs.content.typejs.bundle;
 
 import dev.latvian.mods.kubejs.script.ScriptType;
-import dev.toapuro.advancedkjs.content.js.bundle.esbuild.ESBuildRuntimeWrapper;
-import dev.toapuro.advancedkjs.content.js.bundle.esbuild.ESBuildWrapper;
+import dev.toapuro.advancedkjs.content.typejs.bundle.esbuild.ESBuildRuntimeWrapper;
+import dev.toapuro.advancedkjs.content.typejs.bundle.esbuild.ESBuildWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

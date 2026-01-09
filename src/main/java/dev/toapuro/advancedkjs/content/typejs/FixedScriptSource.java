@@ -1,4 +1,4 @@
-package dev.toapuro.advancedkjs.content.js;
+package dev.toapuro.advancedkjs.content.typejs;
 
 import dev.latvian.mods.kubejs.script.ScriptFileInfo;
 import dev.latvian.mods.kubejs.script.ScriptSource;
